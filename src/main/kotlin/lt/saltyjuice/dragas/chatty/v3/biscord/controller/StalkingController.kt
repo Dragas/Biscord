@@ -1,19 +1,18 @@
 package lt.saltyjuice.dragas.chatty.v3.biscord.controller
 
+import lt.saltyjuice.dragas.chatty.v3.core.controller.Controller
 import lt.saltyjuice.dragas.chatty.v3.core.route.On
-import lt.saltyjuice.dragas.chatty.v3.core.route.When
 import lt.saltyjuice.dragas.chatty.v3.discord.api.Utility
-import lt.saltyjuice.dragas.chatty.v3.discord.controller.ConnectionController
-import lt.saltyjuice.dragas.chatty.v3.discord.controller.DiscordController
+import lt.saltyjuice.dragas.chatty.v3.discord.controller.DiscordConnectionController
 import lt.saltyjuice.dragas.chatty.v3.discord.message.MessageBuilder
 import lt.saltyjuice.dragas.chatty.v3.discord.message.event.EventGuildMemberAdd
 import lt.saltyjuice.dragas.chatty.v3.discord.message.event.EventMessageCreate
 import lt.saltyjuice.dragas.chatty.v3.discord.message.event.EventMessageUpdate
+import lt.saltyjuice.dragas.chatty.v3.discord.message.general.ChangedMember
 import lt.saltyjuice.dragas.chatty.v3.discord.message.general.Channel
 import lt.saltyjuice.dragas.chatty.v3.discord.message.general.Message
 import lt.saltyjuice.dragas.chatty.v3.discord.message.general.User
 import lt.saltyjuice.dragas.chatty.v3.discord.message.response.ChannelBuilder
-import lt.saltyjuice.dragas.chatty.v3.discord.message.response.OPResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -23,38 +22,29 @@ import java.time.ZoneOffset
 import java.util.*
 
 
-class StalkingController : DiscordController()
+class StalkingController : Controller
 {
-
     @On(EventMessageCreate::class)
-    @When("alwaysTrue")
-    fun onMessage(request: EventMessageCreate): OPResponse<*>?
+    fun onMessage(request: Message)
     {
-        val content = request.data!!
-        checkForLinks(content)
-        return null
+        checkForLinks(request)
     }
 
     @On(EventMessageUpdate::class)
-    @When("alwaysTrue")
-    fun onMessage(request: EventMessageUpdate): OPResponse<*>?
+    fun onMessageUpdate(request: Message)
     {
-        val content = request.data!!
-        checkForLinks(content)
-        return null
+        checkForLinks(request)
     }
 
     @On(EventGuildMemberAdd::class)
-    @When("alwaysTrue")
-    fun onNewGuildMember(event: EventGuildMemberAdd): OPResponse<*>?
+    fun onNewGuildMember(event: ChangedMember)
     {
-        extractData(event.data!!.user)
-        return null
+        extractData(event.user)
     }
 
-    fun containsID(request: EventMessageCreate): Boolean
+    fun containsID(request: Message): Boolean
     {
-        return request.data!!.content.matches(Regex("\\d+"))
+        return request.content.matches(Regex("\\d+"))
     }
 
     fun checkForLinks(message: Message)
@@ -96,11 +86,6 @@ class StalkingController : DiscordController()
                 .send(officeChannel)// 342047989067677699
     }
 
-    fun alwaysTrue(event: Any): Boolean
-    {
-        return true
-    }
-
     fun getVerboseAge(age: Long): String
     {
         val sb = StringBuilder()
@@ -134,7 +119,7 @@ class StalkingController : DiscordController()
         {
             if (!message.author.isBot)
             {
-                val author = ConnectionController.getUser(message.channelId, message.author.id)
+                val author = DiscordConnectionController.getUser(message.channelId, message.author.id)
                 val hasNoRole = author?.roles?.isEmpty() ?: true
                 if (message.content.contains(linkRegex) && hasNoRole)
                 {
@@ -241,9 +226,6 @@ class StalkingController : DiscordController()
 
         @JvmStatic
         private val officeChannel = System.getenv("office_id")
-
-        @JvmStatic
-        private val permittedRoles = System.getenv("roles").split(";")
 
         @JvmStatic
         private val sdf = SimpleDateFormat("YYYY-MM-dd HH:mm:ss z")

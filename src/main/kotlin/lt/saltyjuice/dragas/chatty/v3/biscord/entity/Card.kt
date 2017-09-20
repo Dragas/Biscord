@@ -59,8 +59,8 @@ open class Card : Comparable<Card>
     var flavor: String = ""
     @Expose
     @SerializedName("entourage")
-    var entourage: ArrayList<String> = ArrayList()
-    var entourages: ArrayList<Card> = ArrayList()
+    var entourage: List<String> = ArrayList()
+    var entourages: List<Card> = ArrayList()
     @Expose
     @SerializedName("artist")
     var artist: String = ""
