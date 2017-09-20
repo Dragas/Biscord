@@ -1,6 +1,5 @@
 package lt.saltyjuice.dragas.chatty.v3.biscord.controller
 
-import lt.saltyjuice.dragas.chatty.v3.biscord.clearMyMentions
 import lt.saltyjuice.dragas.chatty.v3.biscord.doIf
 import lt.saltyjuice.dragas.chatty.v3.biscord.entity.Card
 import lt.saltyjuice.dragas.chatty.v3.biscord.utility.BiscordUtility
@@ -15,20 +14,19 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.util.*
-import kotlin.coroutines.experimental.buildSequence
 import kotlin.streams.toList
 
 class CardController : Controller
 {
     fun isCardRequest(request: Message): Boolean
     {
-        if (request.mentionsMe())
+        /*if (request.mentionsMe())
         {
             request.clearMyMentions()
-        }
-        return request.content.startsWith("card").doIf()
+        }*/
+        return request.content.startsWith("?card").doIf()
         {
-            request.content = request.content.replace("card", "")
+            request.content = request.content.replace("?card ", "")
         }
     }
 
@@ -140,18 +138,17 @@ class CardController : Controller
         fun consumeCards(set: Set<Card>)
         {
             cardss = set
-            collectableCards = buildSequence<Card> { yieldAll(cardss.filter(Card::collectible)) }.toSet()
+            collectableCards = cardss.parallelStream().filter(Card::collectible).toList().toSet()
             collectableCards
+                    .parallelStream()
                     .filter { it.entourage.isNotEmpty() }
                     .forEach()
                     { entoraging ->
-                        entoraging.entourages.addAll(
-                                entoraging
-                                        .entourage
-                                        .map(this@Companion::getCardById)
-                                        .filter { it.isPresent }
-                                        .map { it.get() }
-                        )
+                        entoraging.entourages = entoraging
+                                .entourage
+                                .map(this@Companion::getCardById)
+                                .filter { it.isPresent }
+                                .map { it.get() }
                     }
         }
 

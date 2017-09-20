@@ -13,7 +13,7 @@ class CardWorker(private val request: Message)
 {
     private var arguments = Array(1, { "" })
     private var shouldBeGold = false
-    private var shouldBeVerbose = false
+    private var shouldBeImage = false
     private var shouldBeMany = false
     private var shouldIncludeCreated = false
     private var cards: Collection<Card> = mutableListOf()
@@ -34,7 +34,7 @@ class CardWorker(private val request: Message)
         if (exception != null)
             arguments[0] = exceptionMap[exception]!!
         shouldBeGold = containsArgument(Param.GOLD)
-        shouldBeVerbose = containsArgument(Param.VERBOSE)
+        shouldBeImage = containsArgument(Param.IMAGE)
         shouldBeMany = containsArgument(Param.MANY)
         shouldIncludeCreated = containsArgument(Param.CREATES)
     }
@@ -102,7 +102,7 @@ class CardWorker(private val request: Message)
 
     fun buildMessage(it: Card): MessageBuilder
     {
-        if (shouldBeVerbose)
+        if (!shouldBeImage)
         {
             return MessageBuilder(request.channelId)
                     .beginCodeSnippet("markdown")
@@ -118,7 +118,7 @@ class CardWorker(private val request: Message)
         else
         {
             return MessageBuilder(request.channelId)
-                    .message(it.img)
+                    .append(it.img)
         }
     }
 
@@ -165,7 +165,7 @@ class CardWorker(private val request: Message)
     {
         CARD("card"),
         MANY("many", "m"),
-        VERBOSE("verbose", "v"),
+        IMAGE("image", "i"),
         GOLD("gold", "g"),
         CREATES("creates", "c");
     }
