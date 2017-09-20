@@ -3,13 +3,11 @@ package lt.saltyjuice.dragas.chatty.v3.biscord.controller
 import lt.saltyjuice.dragas.chatty.v3.biscord.doIf
 import lt.saltyjuice.dragas.chatty.v3.biscord.entity.Card
 import lt.saltyjuice.dragas.chatty.v3.biscord.entity.Type
-import lt.saltyjuice.dragas.chatty.v3.biscord.middleware.MentionsMe
 import lt.saltyjuice.dragas.chatty.v3.biscord.utility.BiscordUtility
-import lt.saltyjuice.dragas.chatty.v3.core.route.Before
+import lt.saltyjuice.dragas.chatty.v3.core.controller.Controller
 import lt.saltyjuice.dragas.chatty.v3.core.route.On
 import lt.saltyjuice.dragas.chatty.v3.core.route.When
-import lt.saltyjuice.dragas.chatty.v3.discord.controller.ConnectionController
-import lt.saltyjuice.dragas.chatty.v3.discord.controller.DiscordController
+import lt.saltyjuice.dragas.chatty.v3.discord.controller.DiscordConnectionController
 import lt.saltyjuice.dragas.chatty.v3.discord.exception.MessageBuilderException
 import lt.saltyjuice.dragas.chatty.v3.discord.message.MessageBuilder
 import lt.saltyjuice.dragas.chatty.v3.discord.message.event.EventMessageCreate
@@ -19,10 +17,10 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.util.*
 import java.util.stream.Stream
-import kotlin.coroutines.experimental.buildIterator
+import kotlin.coroutines.experimental.buildSequence
 import kotlin.streams.toList
 
-class CardController : DiscordController()
+class CardController : Controller
 {
     private var arguments = Array(1, { "" })
     private var shouldBeGold = false
@@ -49,10 +47,13 @@ class CardController : DiscordController()
             Pair("Shit", "\"(You)\"")
     )
 
-    fun isCardRequest(request: EventMessageCreate): Boolean
+    fun isCardRequest(request: Message): Boolean
     {
-        val content = request.data!!
-        return containsArgument(content, Param.CARD.values[0])
+        if (request.mentionsMe())
+        {
+
+        }
+        return containsArgument(request, Param.CARD.values[0])
     }
 
     private fun containsArgument(request: Message, param: String): Boolean
@@ -63,9 +64,9 @@ class CardController : DiscordController()
         }
     }
 
-    private fun beforeRequest(request: EventMessageCreate)
+    private fun beforeRequest(request: Message)
     {
-        arguments = parseArguments(request.data!!.content)
+        arguments = parseArguments(request.content)
         beforeRequest()
     }
 
@@ -106,10 +107,8 @@ class CardController : DiscordController()
 
     @On(EventMessageCreate::class)
     @When("isCardRequest")
-    @Before(MentionsMe::class)
-    fun onCardRequest(request: EventMessageCreate)
+    fun onCardRequest(request: Message)
     {
-        content = request.data!!
         beforeRequest(request)
         messageBuilder = MessageBuilder()
         if (shouldBeGold)
@@ -241,7 +240,7 @@ class CardController : DiscordController()
                 {
                     messageBuilder
                             .append(" creates ${card.entourages.count()} cards. Use \"")
-                            .mention(ConnectionController.getCurrentUser())
+                            .mention(DiscordConnectionController.getCurrentUser())
                             .append(" card ${card.name} --creates\" to include them.")
                 }
                 else
@@ -342,8 +341,8 @@ class CardController : DiscordController()
         @Throws(NullPointerException::class)
         fun getCardById(dbfId: Int): Optional<Card>
         {
-            val cards = getCards()
-            return cards.parallelStream()
+            return getCards()
+                    .parallelStream()
                     .filter { it.dbfId == dbfId }
                     .findFirst()
         }
@@ -352,33 +351,47 @@ class CardController : DiscordController()
         @Throws(NullPointerException::class)
         fun getCardById(dbfId: String): Optional<Card>
         {
-            val cards = getCards()
-            return cards.parallelStream()
+            return getCards()
+                    .parallelStream()
                     .filter { it.cardId == dbfId }
                     .findFirst()
+        }
 
+        @JvmStatic
+        @Throws(NullPointerException::class)
+        fun getCardsByStringId(list: List<String>): List<Card>
+        {
+            return getCards()
+                    .parallelStream()
+                    .filter { list.contains(it.cardId) }
+                    .toList()
+        }
+
+        @JvmStatic
+        fun getCardsByIntId(list: List<Int>): List<Card>
+        {
+            return getCards()
+                    .parallelStream()
+                    .filter { list.contains(it.dbfId) }
+                    .toList()
         }
 
         @JvmStatic
         fun consumeCards(set: Set<Card>)
         {
             cardss = set
-            collectableCards = buildIterator<Card>()
-            {
-                yieldAll(cardss.filter(Card::collectible))
-            }.asSequence().toSet()
+            collectableCards = buildSequence<Card> { yieldAll(cardss.filter(Card::collectible)) }.toSet()
             collectableCards
                     .filter { it.entourage.isNotEmpty() }
                     .forEach()
                     { entoraging ->
-                        val list = buildIterator<Card>()
-                        {
-                            entoraging.entourage
-                                    .map(this@Companion::getCardById)
-                                    .filter(Optional<Card>::isPresent)
-                                    .forEach { this.yield(it.get()) }
-                        }.asSequence().toList()
-                        entoraging.entourages.addAll(list)
+                        entoraging.entourages.addAll(
+                                entoraging
+                                        .entourage
+                                        .map(this@Companion::getCardById)
+                                        .filter { it.isPresent }
+                                        .map { it.get() }
+                        )
                     }
         }
 
