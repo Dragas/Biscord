@@ -69,7 +69,7 @@ class CardWorker(private val request: Message)
         checkValidity()
         val initialFilter = if (shouldBeMany) this::filterForMany else this::filterForSingle
         val initialList = if (shouldIncludeCreated) CardController.getCards() else CardController.getCollectable()
-        cards = getCards(initialList, initialFilter)
+        var cards = getCards(initialList, initialFilter)
         if (cards.isEmpty() && !shouldBeMany)
         {
             cards = getCards(initialList, this::filterForMany)
@@ -78,6 +78,11 @@ class CardWorker(private val request: Message)
         {
             cards = getCards(CardController.getCards(), this::filterForMany)
         }
+        if (cards.size == 1 && shouldIncludeCreated)
+        {
+            cards = cards.toTypedArray()[0].entourages
+        }
+        this.cards = cards
         cardsObtained = true
         return this
     }
@@ -108,8 +113,9 @@ class CardWorker(private val request: Message)
                     .beginCodeSnippet("markdown")
                     .appendLine("[${it.name}][${it.cardId}][${it.dbfId}]")
                     .append("[${it.cost} Mana, ${it.rarity} ")
-                    .apply { if (it.type == Type.Minion) this.append("${it.attack}/${it.health} ") }
+                    .apply { if (it.type == Type.MINION) this.append("${it.attack}/${it.health} ") }
                     .appendLine("${it.type?.name}]")
+                    .appendLine("[Set: ${it.cardSet}]")
                     .appendLine(it.text)
                     .appendLine("> ${it.flavor}")
                     .endCodeSnippet()
