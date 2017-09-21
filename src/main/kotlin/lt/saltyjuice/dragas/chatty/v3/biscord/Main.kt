@@ -11,7 +11,6 @@ import java.util.concurrent.TimeUnit
 
 fun main(args: Array<String>) = runBlocking<Unit>
 {
-    //Utility.okHttpBuilder.addInterceptor(HeaderInterceptor(Pair("X-Requested-With", "XMLHttpRequest")))
     BiscordUtility.okHttpClientBuilder.connectTimeout(0, TimeUnit.MILLISECONDS)
     RateLimitInterceptor.shouldWait = true
     CardController.initialize()
