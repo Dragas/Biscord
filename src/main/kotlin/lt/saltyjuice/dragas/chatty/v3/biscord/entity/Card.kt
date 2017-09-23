@@ -2,9 +2,6 @@ package lt.saltyjuice.dragas.chatty.v3.biscord.entity
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
-import lt.saltyjuice.dragas.chatty.v3.discord.message.general.Embed
-import lt.saltyjuice.dragas.chatty.v3.discord.message.general.Field
-import lt.saltyjuice.dragas.chatty.v3.discord.message.general.Image
 
 open class Card : Comparable<Card>
 {
@@ -95,61 +92,4 @@ open class Card : Comparable<Card>
     @Expose
     @SerializedName("howToGetGold")
     var howToGetGold: String = ""
-
-    @JvmOverloads
-    fun toEmbed(gold: Boolean = false): Embed
-    {
-        return Embed().apply()
-        {
-            title = name
-            color = playerClass?.color ?: PlayerClass.Neutral.color
-            fields = getCardFields()
-            description = text
-            image = Image().apply()
-            {
-                url = if (gold) imgGold else img
-            }
-        }
-    }
-
-    fun getCardFields(): ArrayList<Field>
-    {
-        val list = ArrayList<Field>()
-        list.add(Field("Set", cardSet))
-        if (rarity.isNotBlank())
-            list.add(Field("Rarity", rarity))
-        if (playerClass != null)
-            list.add(Field("Class", playerClass!!.value))
-        list.add(Field("Cost", "$cost"))
-        when (type)
-        {
-            Type.SPELL  ->
-            {
-
-            }
-            Type.HERO   ->
-            {
-                list.add(Field("Armor", "$armor"))
-                list.add(Field("Health", "$health"))
-            }
-            Type.MINION ->
-            {
-                list.add(Field("Attack", "$attack"))
-                list.add(Field("Health", "$health"))
-            }
-            else        ->
-            {
-
-            }
-        }
-        if (howToGet.isNotBlank())
-            list.add(Field("How to get", howToGet))
-        if (howToGetGold.isNotBlank())
-            list.add(Field("How to get gold", howToGet))
-        if (flavor.isNotBlank())
-            list.add(Field("Flavor", flavor))
-
-
-        return ArrayList(list.filter { it.value.isNotBlank() })
-    }
 }
