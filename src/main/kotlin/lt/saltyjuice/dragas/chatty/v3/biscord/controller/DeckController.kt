@@ -9,18 +9,12 @@ import lt.saltyjuice.dragas.chatty.v3.discord.message.general.Message
 
 open class DeckController : Controller
 {
-    /*fun decodeTest(request: Message): Boolean
-    {
-        val data = request.content.split(" ")
-        return data.find(this::canDecode) != null
-    }*/
-
     @On(EventMessageCreate::class)
     fun onDecodeRequest(request: Message)
     {
         request
                 .content
-                .split(" ")
+                .split(Regex("\\s"))
                 .map(::DeckWorker)
                 .filter(this::isValidWorker)
                 .map(this::toMessageBuilder)
