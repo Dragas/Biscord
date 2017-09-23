@@ -184,7 +184,9 @@ class CardWorker(private val request: Message)
                 Pair("Black Lotus", "Innervate"),
                 Pair("Dr. Balance", "Dr. Boom"),
                 Pair("Dr Balance", "Dr. Boom"),
-                Pair("Shit", "\"(You)\"")
+                Pair("Shit", "\"(You)\""),
+                Pair("nzoth", "N'Zoth, the Corruptor"),
+                Pair("yogg", "Yogg-Saron, Hope's End")
         )
     }
 }
