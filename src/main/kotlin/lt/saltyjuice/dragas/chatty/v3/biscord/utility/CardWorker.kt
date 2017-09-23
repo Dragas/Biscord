@@ -16,6 +16,7 @@ class CardWorker(private val request: Message)
     private var shouldBeImage = false
     private var shouldBeMany = false
     private var shouldIncludeCreated = false
+    private var shouldFindById = false
     private var cards: Collection<Card> = mutableListOf()
     private var cardsObtained = false
     private var messages: List<MessageBuilder> = ArrayList<MessageBuilder>()
@@ -37,6 +38,7 @@ class CardWorker(private val request: Message)
         shouldBeImage = containsArgument(Param.IMAGE)
         shouldBeMany = containsArgument(Param.MANY)
         shouldIncludeCreated = containsArgument(Param.CREATES)
+        shouldFindById = containsArgument(Param.ID)
     }
 
     private fun parseArguments(request: String)
@@ -70,17 +72,32 @@ class CardWorker(private val request: Message)
         val initialFilter = if (shouldBeMany) this::filterForMany else this::filterForSingle
         val initialList = if (shouldIncludeCreated) CardController.getCards() else CardController.getCollectable()
         var cards = getCards(initialList, initialFilter)
-        if (cards.isEmpty() && !shouldBeMany)
+        if (shouldFindById)
         {
-            cards = getCards(initialList, this::filterForMany)
+            try
+            {
+                val id = arguments[0].toInt()
+                cards = getCards(CardController.getCards(), { it.dbfId == id })
+            }
+            catch (err: NumberFormatException)
+            {
+
+            }
         }
-        if (cards.isEmpty() && !shouldIncludeCreated)
+        else
         {
-            cards = getCards(CardController.getCards(), this::filterForMany)
-        }
-        if (cards.size == 1 && shouldIncludeCreated)
-        {
-            cards = cards.toTypedArray()[0].entourages
+            if (cards.isEmpty() && !shouldBeMany)
+            {
+                cards = getCards(initialList, this::filterForMany)
+            }
+            if (cards.isEmpty() && !shouldIncludeCreated)
+            {
+                cards = getCards(CardController.getCards(), this::filterForMany)
+            }
+            if (cards.size == 1 && shouldIncludeCreated && !shouldFindById)
+            {
+                cards = cards.toTypedArray()[0].entourages
+            }
         }
         this.cards = cards
         cardsObtained = true
@@ -173,7 +190,8 @@ class CardWorker(private val request: Message)
         MANY("many", "m"),
         IMAGE("image", "i"),
         GOLD("gold", "g"),
-        CREATES("creates", "c");
+        CREATES("creates", "c"),
+        ID("id", "id");
     }
 
     companion object

@@ -85,8 +85,9 @@ open class DeckWorker(private val hash: String)
 
     private fun readHero(): Boolean
     {
-        heroClass = PlayerClass.getById(readInt())
-        return heroClass != PlayerClass.Neutral
+        val playerClassInt = readInt()
+        heroClass = PlayerClass.getById(playerClassInt)
+        return true //heroClass != PlayerClass.Neutral
     }
 
     private fun launchProducer(): ProducerJob<Int> = produce<Int>(Unconfined)

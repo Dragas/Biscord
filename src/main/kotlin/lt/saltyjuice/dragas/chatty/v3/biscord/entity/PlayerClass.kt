@@ -1,17 +1,37 @@
 package lt.saltyjuice.dragas.chatty.v3.biscord.entity
 
-enum class PlayerClass(val value: String, val color: Int, val id: Int)
+enum class PlayerClass(val value: String, val id: Int)
 {
-    Mage("Mage", 0x7882ac, 637),
-    Warlock("Warlock", 0x533b5b, 893),
-    Paladin("Paladin", 0xab682e, 671),
-    Warrior("Warrior", 0x621a21, 7),
-    Rogue("Rogue", 0x3f383c, 930),
-    Hunter("Hunter", 0x2e5e21, 31),
-    Priest("Priest", 0xd2d9de, 813),
-    Shaman("Shaman", 0x2f3461, 1066),
-    Druid("Druid", 0x713b24, 274),
-    Neutral("Neutral", 0x7a6a5d, -1);
+
+    Warlock("Warlock", 893),
+
+    Warrior("Warrior", 7),
+    Magni("Warrior", 2828),
+
+    Hunter("Hunter", 31),
+    Alleria("Hunter", 2826),
+
+    Shaman("Shaman", 1066),
+    Morgl("Shaman", 40183),
+
+
+    Druid("Druid", 274),
+
+    Mage("Mage", 637),
+    Khadgar("Mage", 39117),
+    Medivh("Mage", 2829),
+
+    Rogue("Rogue", 930),
+    Maiev("Rogue", 40195),
+
+    Paladin("Paladin", 671),
+    Liadrin("Paladin", 2827),
+    Arthas("Paladin", 46116),
+
+    Priest("Priest", 813),
+    Tyrande("Priest", 41887),
+
+    Neutral("Neutral", -1);
 
     companion object
     {
