@@ -28,11 +28,11 @@ open class Card : Comparable<Card>
     @SerializedName("name")
     var name: String = ""
     @Expose
-    @SerializedName("cardSet")
+    @SerializedName("set")
     var cardSet: String = ""
     @Expose
     @SerializedName("type")
-    var type: Type? = Type.Spell
+    var type: Type? = Type.SPELL
     @Expose
     @SerializedName("faction")
     var faction: String = ""
@@ -123,21 +123,21 @@ open class Card : Comparable<Card>
         list.add(Field("Cost", "$cost"))
         when (type)
         {
-            Type.Spell ->
+            Type.SPELL  ->
             {
 
             }
-            Type.Hero ->
+            Type.HERO   ->
             {
                 list.add(Field("Armor", "$armor"))
                 list.add(Field("Health", "$health"))
             }
-            Type.Minion ->
+            Type.MINION ->
             {
                 list.add(Field("Attack", "$attack"))
                 list.add(Field("Health", "$health"))
             }
-            else ->
+            else        ->
             {
 
             }
