@@ -25,7 +25,7 @@ open class DeckController : Controller
 
     open fun notByMe(message: Message): Boolean
     {
-        return !message.author.isBot
+        return !message.author.isBot && !message.content.contains("#")
     }
 
     open fun isValidWorker(worker: DeckWorker): Boolean
