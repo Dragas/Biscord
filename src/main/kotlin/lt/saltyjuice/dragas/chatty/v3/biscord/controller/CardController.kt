@@ -1,5 +1,6 @@
 package lt.saltyjuice.dragas.chatty.v3.biscord.controller
 
+import lt.saltyjuice.dragas.chatty.v3.biscord.clearMyMentions
 import lt.saltyjuice.dragas.chatty.v3.biscord.doIf
 import lt.saltyjuice.dragas.chatty.v3.biscord.entity.Card
 import lt.saltyjuice.dragas.chatty.v3.biscord.utility.BiscordUtility
@@ -20,13 +21,13 @@ class CardController : Controller
 {
     fun isCardRequest(request: Message): Boolean
     {
-        /*if (request.mentionsMe())
+        if (request.mentionsMe())
         {
             request.clearMyMentions()
-        }*/
-        return request.content.startsWith("?card").doIf()
+        }
+        return request.content.startsWith("card").doIf()
         {
-            request.content = request.content.replace("?card ", "")
+            request.content = request.content.replace("card ", "")
         }
     }
 
