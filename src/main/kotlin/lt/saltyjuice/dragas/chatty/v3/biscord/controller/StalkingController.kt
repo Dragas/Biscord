@@ -71,6 +71,13 @@ class StalkingController : Controller
         {
             return
         }
+        message.content = message.content
+                .toLowerCase()
+                .replace(Regex("[()]"), "")
+                .replace(Regex("d[0o]t"), ".")
+                .replace(Regex("sl[4a]sh"), "/")
+                .replace(Regex("\\s\\."), ".")
+                .replace(Regex("\\s/\\s"), "/")
         val author = DiscordConnectionController.getUser(message.channelId, message.author.id)
         val hasNoRole = author?.roles?.isEmpty() ?: true
         if (message.content.contains(linkRegex) && hasNoRole)
