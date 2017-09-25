@@ -44,7 +44,6 @@ test:
 deploy:
   stage: deploy
   script:
-    - sudo apt-get install svn
     # Add Svn as remote
     - echo "[svn-remote \"svn\"]\n" >> ./.git/config
     - echo "\turl = http://$SVN_USERNAME:$SVN_PASSWORD@dev.jug.lt/svn/i11-gridinas.i11-gridinas.m/trunk/Biscord-Jeeves\n" >> ./.git/config
