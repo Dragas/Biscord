@@ -40,3 +40,24 @@ test:
   stage: test
   script:
     - ./gradlew -g /cache/.gradle check
+
+deploy:
+  stage: deploy
+  script:
+    - sudo apt-get install svn
+    # Add Svn as remote
+    - echo "[svn-remote \"svn\"]\n" >> ./.git/config
+    - echo "\turl = http://$SVN_USERNAME:$SVN_PASSWORD@dev.jug.lt/svn/i11-gridinas.i11-gridinas.m/trunk/Biscord-Jeeves\n" >> ./.git/config
+    - echo "\tfetch = :refs/remotes/git-svn\n" >> ./.git/config
+    # merges master into svn master
+    - git svn fetch svn
+    - git checkout -b svn git-svn
+    - git merge master
+    - git svn dcommit
+    # rebases svn master to git master and commits it
+    - git checkout master
+    - git rebase svn
+    - git branch -d svn
+    - git svn dcommit
+  only:
+    - master
