@@ -43,8 +43,11 @@ test:
 
 deploy:
   stage: deploy
+  environment:
+    name: deployment
   script:
     # Add Svn as remote
+    - chmod -x gradlew
     - apt-get -y update && apt-get -y install git-svn
     - printf "[svn-remote \"svn\"]\\n" >> ./.git/config
     - printf "\\turl = http://dev.jug.lt/svn/i11-gridinas.i11-gridinas.m/trunk/Biscord-Jeeves\\n" >> ./.git/config
