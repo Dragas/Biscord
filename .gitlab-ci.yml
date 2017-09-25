@@ -46,8 +46,8 @@ deploy:
   script:
     # Add Svn as remote
     - printf "[svn-remote \"svn\"]\\n" >> ./.git/config
-    - printf "\turl = http://$SVN_USERNAME:$SVN_PASSWORD@dev.jug.lt/svn/i11-gridinas.i11-gridinas.m/trunk/Biscord-Jeeves\n" >> ./.git/config
-    - printf "\tfetch = :refs/remotes/git-svn\n" >> ./.git/config
+    - printf "\\turl = http://$SVN_USERNAME:$SVN_PASSWORD@dev.jug.lt/svn/i11-gridinas.i11-gridinas.m/trunk/Biscord-Jeeves\\n" >> ./.git/config
+    - printf "\\tfetch = :refs/remotes/git-svn\\n" >> ./.git/config
     # merges master into svn master
     - git svn fetch svn
     - git checkout -b svn git-svn
