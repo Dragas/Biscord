@@ -43,6 +43,8 @@ test:
 
 deploy:
   stage: deploy
+  environment:
+    name: deployment
   script:
     # Add Svn as remote
     - chmod -x gradlew
