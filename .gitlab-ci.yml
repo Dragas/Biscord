@@ -54,13 +54,13 @@ deploy:
     - printf "\\tfetch = :refs/remotes/git-svn\\n" >> ./.git/config
     # merges master into svn master
     - printf $SVN_PASSWORD | git svn fetch svn --username $SVN_USERNAME
-    - git checkout -b svn git-svn
-    - git merge master
-    - git svn dcommit
     - git config user.name $GIT_NAME
     - git config user.email $GIT_EMAIL
+    - printf $GIT_PASSWORD | git checkout -b svn git-svn
+    - git merge master
+    - git svn dcommit
     # rebases svn master to git master and commits it
-    - printf $GIT_PASSWORD | git checkout master
+    - git checkout master
     - git rebase svn
     - git branch -d svn
     - git svn dcommit
