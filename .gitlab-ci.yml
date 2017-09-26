@@ -57,8 +57,10 @@ deploy:
     - git checkout -b svn git-svn
     - git merge master
     - git svn dcommit
+    - git config user.name $GIT_NAME
+    - git config user.email $GIT_EMAIL
     # rebases svn master to git master and commits it
-    - git checkout master
+    - printf $GIT_PASSWORD | git checkout master
     - git rebase svn
     - git branch -d svn
     - git svn dcommit
