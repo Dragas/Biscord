@@ -57,11 +57,11 @@ deploy:
     - git config user.name $GIT_NAME
     - git config user.email $GIT_EMAIL
     - printf $GIT_PASSWORD | git checkout -b svn git-svn
-    - git reset --hard master
+    - git pull -s recursive -X theirs origin/master
     - git svn dcommit
     # rebases svn master to git master and commits it
     - git checkout master
-    - git reset --hard svn
+    - git rebase svn
     - git branch -d svn
     - git svn dcommit
   only:
