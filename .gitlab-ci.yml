@@ -57,7 +57,7 @@ deploy:
     - git config user.name $GIT_NAME
     - git config user.email $GIT_EMAIL
     - printf $GIT_PASSWORD | git checkout -b svn git-svn
-    - git pull -s recursive -X theirs origin/master
+    - git merge master --strategy-option theirs
     - git svn dcommit
     # rebases svn master to git master and commits it
     - git checkout master
