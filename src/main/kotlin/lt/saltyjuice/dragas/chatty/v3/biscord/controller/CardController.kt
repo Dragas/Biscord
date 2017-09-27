@@ -3,6 +3,7 @@ package lt.saltyjuice.dragas.chatty.v3.biscord.controller
 import lt.saltyjuice.dragas.chatty.v3.biscord.clearMyMentions
 import lt.saltyjuice.dragas.chatty.v3.biscord.doIf
 import lt.saltyjuice.dragas.chatty.v3.biscord.entity.Card
+import lt.saltyjuice.dragas.chatty.v3.biscord.entity.Type
 import lt.saltyjuice.dragas.chatty.v3.biscord.utility.BiscordUtility
 import lt.saltyjuice.dragas.chatty.v3.biscord.utility.CardWorker
 import lt.saltyjuice.dragas.chatty.v3.core.controller.Controller
@@ -42,10 +43,34 @@ class CardController : Controller
             return
         }
 
-        cardWorker
+        val list = cardWorker
                 .getCards()
-                .buildMessage()
-                .send()
+                .parallelStream()
+                .map(this::buildMessage)
+                .toList()
+                .toMutableList()
+        if (list.isEmpty())
+        {
+            list.add(MessageBuilder()
+                    .mention(request.author)
+                    .append("no results were found for card name that's like `${cardWorker.getArgument(0)}`"))
+        }
+        list.forEach { it.send(request.channelId) }
+    }
+
+    fun buildMessage(it: Card): MessageBuilder
+    {
+        return MessageBuilder()
+                .beginCodeSnippet("markdown")
+                .appendLine("[${it.name}][${it.cardId}][${it.dbfId}]")
+                .append("[${it.cost} Mana, ${it.rarity} ")
+                .apply { if (it.type == Type.MINION) this.append("${it.attack}/${it.health} ") }
+                .appendLine("${it.type?.name}]")
+                .appendLine("[Set: ${it.cardSet}]")
+                .appendLine(it.text)
+                .appendLine("> ${it.flavor}")
+                .endCodeSnippet()
+                .appendLine("https://hsreplay.net/cards/${it.dbfId}")
     }
 
     companion object : Callback<Set<Card>>
