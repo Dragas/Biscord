@@ -21,14 +21,11 @@ class CardController : Controller
 {
     fun isCardRequest(request: Message): Boolean
     {
-        if (request.mentionsMe())
-        {
-            request.clearMyMentions()
-        }
-        return request.content.startsWith("card").doIf()
-        {
-            request.content = request.content.replace("card ", "")
-        }
+        return request.mentionsMe().doIf { request.clearMyMentions() } &&
+                request
+                        .content
+                        .startsWith("card")
+                        .doIf { request.content = request.content.replace("card ", "") }
     }
 
     @On(EventMessageCreate::class)
