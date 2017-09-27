@@ -48,16 +48,14 @@ class CardController : Controller
                 .parallelStream()
                 .map(this::buildMessage)
                 .toList()
-        if (list.isNotEmpty())
+                .toMutableList()
+        if (list.isEmpty())
         {
-            list.forEach { it.send(request.channelId) }
-        }
-        else
-        {
-            MessageBuilder()
+            list.add(MessageBuilder()
                     .mention(request.author)
-                    .append("no results were found for card name that's like `${cardWorker.getArgument(0)}`")
+                    .append("no results were found for card name that's like `${cardWorker.getArgument(0)}`"))
         }
+        list.forEach { it.send(request.channelId) }
     }
 
     fun buildMessage(it: Card): MessageBuilder
