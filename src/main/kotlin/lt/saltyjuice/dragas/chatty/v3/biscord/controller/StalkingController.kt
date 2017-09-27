@@ -53,8 +53,11 @@ class StalkingController : Controller
     fun containsID(request: Message): Boolean
     {
         return request.channelId == officeChannel
-                && request.mentionsMe().doIf { request.clearMyMentions() }
-                && request.content.startsWith("stalk").doIf { request.content = request.content.replace("stalk ", "") }
+                && request
+                .mentionsMe()
+                .doIf { request.clearMyMentions() }
+                && request.content.startsWith("stalk")
+                .doIf { request.content = request.content.replace("stalk ", "") }
                 .and(request.content.matches(Regex("^\\d+$")))
 
     }
