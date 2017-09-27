@@ -3,7 +3,6 @@ package lt.saltyjuice.dragas.chatty.v3.biscord.utility
 import lt.saltyjuice.dragas.chatty.v3.biscord.controller.CardController
 import lt.saltyjuice.dragas.chatty.v3.biscord.doIf
 import lt.saltyjuice.dragas.chatty.v3.biscord.entity.Card
-import lt.saltyjuice.dragas.chatty.v3.biscord.entity.Type
 import lt.saltyjuice.dragas.chatty.v3.discord.message.MessageBuilder
 import lt.saltyjuice.dragas.chatty.v3.discord.message.general.Message
 import java.util.*
@@ -66,7 +65,7 @@ class CardWorker(private val request: Message)
     }
 
     @Throws(IllegalStateException::class)
-    fun getCards(): CardWorker
+    fun getCards(): Collection<Card>
     {
         checkValidity()
         val initialFilter = if (shouldBeMany) this::filterForMany else this::filterForSingle
@@ -101,53 +100,7 @@ class CardWorker(private val request: Message)
         }
         this.cards = cards
         cardsObtained = true
-        return this
-    }
-
-    fun buildMessage(): CardWorker
-    {
-        if (!cardsObtained) getCards()
-        if (cards.isEmpty())
-        {
-            MessageBuilder(request.channelId)
-                    .mention(request.author)
-                    .append("no results were found for card name that's like `${arguments[0]}`")
-                    .run { listOf(this) }
-                    .apply { messages = this }
-        }
-        else
-        {
-            this.messages = cards.map(this::buildMessage)
-        }
-        return this
-    }
-
-    fun buildMessage(it: Card): MessageBuilder
-    {
-        if (!shouldBeImage)
-        {
-            return MessageBuilder(request.channelId)
-                    .beginCodeSnippet("markdown")
-                    .appendLine("[${it.name}][${it.cardId}][${it.dbfId}]")
-                    .append("[${it.cost} Mana, ${it.rarity} ")
-                    .apply { if (it.type == Type.MINION) this.append("${it.attack}/${it.health} ") }
-                    .appendLine("${it.type?.name}]")
-                    .appendLine("[Set: ${it.cardSet}]")
-                    .appendLine(it.text)
-                    .appendLine("> ${it.flavor}")
-                    .endCodeSnippet()
-                    .appendLine("https://hsreplay.net/cards/${it.dbfId}")
-        }
-        else
-        {
-            return MessageBuilder(request.channelId)
-                    .append(it.img)
-        }
-    }
-
-    fun send()
-    {
-        this.messages.forEach { it.send() }
+        return this.cards
     }
 
     fun isGold(): Boolean
@@ -206,5 +159,10 @@ class CardWorker(private val request: Message)
                 Pair("nzoth", "N'Zoth, the Corruptor"),
                 Pair("yogg", "Yogg-Saron, Hope's End")
         )
+    }
+
+    fun getArgument(i: Int): String
+    {
+        return arguments[0]
     }
 }
