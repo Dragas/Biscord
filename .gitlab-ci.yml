@@ -41,16 +41,16 @@ test:
   script:
     - ./gradlew -g /cache/.gradle check
 
-deploy:
+deploy-to-svn:
   stage: deploy
   environment:
-    name: deployment
+    name: svndeployment
   script:
     # Add Svn as remote
     - chmod -x gradlew
     - apt-get -y update && apt-get -y install git-svn
     - printf "[svn-remote \"svn\"]\\n" >> ./.git/config
-    - printf "\\turl = http://dev.jug.lt/svn/i11-gridinas.i11-gridinas.m/trunk/Biscord-Jeeves\\n" >> ./.git/config
+    - printf "\\turl =$SVN_URL\\n" >> ./.git/config
     - printf "\\tfetch = :refs/remotes/git-svn\\n" >> ./.git/config
     # merges master into svn master
     - printf $SVN_PASSWORD | git svn fetch svn --username $SVN_USERNAME
@@ -64,5 +64,19 @@ deploy:
     - git rebase svn
     - git branch -d svn
     - git svn dcommit
+  only:
+    - master
+
+deploy-to-heroku:
+  stage: deploy
+  environment:
+    name: herokudeployment
+  script:
+    - wget -qO- https://cli-assets.heroku.com/install-ubuntu.sh | sh
+    - git remote add heroku $HEROKU_REMOTE
+    - heroku --version
+    - printf "$HEROKU_USERNAME\\n$HEROKU_PASSWORD\\n" | heroku login
+    - git fetch
+    - git push heroku master
   only:
     - master
