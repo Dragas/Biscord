@@ -75,7 +75,7 @@ deploy-to-heroku:
     - wget -qO- https://cli-assets.heroku.com/install-ubuntu.sh | sh
     - git remote add heroku $HEROKU_REMOTE
     - heroku --version
-    - printf "$HEROKU_USERNAME\\n$HEROKU_PASSWORD\\n" | heroku login
+    - heroku login
     - git fetch
     - git push heroku master
   only:
