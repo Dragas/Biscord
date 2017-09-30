@@ -92,4 +92,8 @@ open class Card : Comparable<Card>
     @Expose
     @SerializedName("howToGetGold")
     var howToGetGold: String = ""
+
+    @Expose
+    @SerializedName("durability")
+    var durability: Int = 0
 }

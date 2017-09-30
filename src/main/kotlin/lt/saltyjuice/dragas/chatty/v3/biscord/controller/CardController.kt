@@ -63,12 +63,18 @@ class CardController : Controller
         return MessageBuilder()
                 .beginCodeSnippet("markdown")
                 .appendLine("[${it.name}][${it.cardId}][${it.dbfId}]")
-                .append("[${it.cost} Mana, ${it.rarity} ")
-                .apply { if (it.type == Type.MINION) this.append("${it.attack}/${it.health} ") }
+                .append("[${it.cost} Mana, ${it.playerClass} ${it.rarity} ")
+                .apply()
+                {
+                    when
+                    {
+                        it.type == Type.MINION -> this.append("${it.attack}/${it.health} ")
+                        it.type == Type.WEAPON -> this.append("${it.attack}/${it.durability}")
+                    }
+                }
                 .appendLine("${it.type?.name}]")
                 .appendLine("[Set: ${it.cardSet}]")
                 .appendLine(it.text)
-                .appendLine("> ${it.flavor}")
                 .endCodeSnippet()
                 .appendLine("https://hsreplay.net/cards/${it.dbfId}")
     }
