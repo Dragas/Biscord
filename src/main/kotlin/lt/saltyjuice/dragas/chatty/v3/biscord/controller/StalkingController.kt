@@ -17,8 +17,6 @@ import lt.saltyjuice.dragas.chatty.v3.discord.message.general.Message
 import lt.saltyjuice.dragas.chatty.v3.discord.message.general.User
 import lt.saltyjuice.dragas.chatty.v3.discord.message.response.ChannelBuilder
 import java.text.SimpleDateFormat
-import java.time.ZoneId
-import java.time.ZoneOffset
 import java.util.*
 
 
@@ -219,17 +217,14 @@ class StalkingController : Controller
 
         @JvmStatic
         private val sdf = SimpleDateFormat("YYYY-MM-dd HH:mm:ss z")
+
+        @JvmStatic
+        private val epochStart = 1420070400000L
     }
 
     private fun User.getAge(): Long
     {
-        val calendar = Calendar.getInstance()
-        calendar.clear()
-        calendar.timeZone = TimeZone.getTimeZone(ZoneId.ofOffset("GMT", ZoneOffset.ofHours(0)))
-        calendar.set(2015, 0, 0)
-        calendar.timeInMillis += id.toLong().shr(22)
-        calendar.add(Calendar.DAY_OF_MONTH, -1)
-        return Date().time - calendar.timeInMillis
+        return Date().time - (this.id.toLong().shr(22) + epochStart)
     }
 }
 
