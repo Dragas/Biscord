@@ -72,11 +72,8 @@ deploy-to-heroku:
   environment:
     name: herokudeployment
   script:
-    - wget -qO- https://cli-assets.heroku.com/install-ubuntu.sh | sh
-    - git remote add heroku $HEROKU_REMOTE
-    - heroku --version
-    - heroku login
-    - git fetch
-    - git push heroku master
+    - apt-get update -yq && apt-get install -y ruby-dev
+    - gem install dpl
+    - dpl --provider=heroku --app=$HEROKU_APP_NAME --api-key=$HEROKU_API_KEY
   only:
     - master
