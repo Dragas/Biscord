@@ -73,6 +73,7 @@ deploy-to-heroku:
     name: herokudeployment
   script:
     - apt-get update -yq && apt-get install -y ruby-dev
+    - apt-get install -y rubygems
     - gem install dpl
     - dpl --provider=heroku --app=$HEROKU_APP_NAME --api-key=$HEROKU_API_KEY
   only:
