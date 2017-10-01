@@ -17,7 +17,7 @@ open class DeckWorker(private val hash: String)
     private var offset = AtomicInteger(0)
     private var version: Int = 0 // should be 1
     private var numberOfHeroes: Int = 0 // should be 1
-    private var heroClass: PlayerClass = PlayerClass.Neutral // should be something else
+    private var heroClass: PlayerClass = PlayerClass.NEUTRAL // should be something else
     private var format: Format = Format.Invalid // 0 implies invalid
     private var valid = false
     private var deck: HashMap<Card, Int> = HashMap()

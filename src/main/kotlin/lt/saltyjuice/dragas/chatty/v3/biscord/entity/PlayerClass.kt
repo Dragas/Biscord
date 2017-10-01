@@ -3,42 +3,42 @@ package lt.saltyjuice.dragas.chatty.v3.biscord.entity
 enum class PlayerClass(val value: String, val id: Int)
 {
 
-    Warlock("Warlock", 893),
+    WARLOCK("Warlock", 893),
 
-    Warrior("Warrior", 7),
-    Magni("Warrior", 2828),
+    WARRIOR("Warrior", 7),
+    MAGNI("Warrior", 2828),
 
-    Hunter("Hunter", 31),
-    Alleria("Hunter", 2826),
+    HUNTER("Hunter", 31),
+    ALLERIA("Hunter", 2826),
 
-    Shaman("Shaman", 1066),
-    Morgl("Shaman", 40183),
+    SHAMAN("Shaman", 1066),
+    MORGL("Shaman", 40183),
 
 
-    Druid("Druid", 274),
+    DRUID("Druid", 274),
 
-    Mage("Mage", 637),
-    Khadgar("Mage", 39117),
-    Medivh("Mage", 2829),
+    MAGE("Mage", 637),
+    KHADGAR("Mage", 39117),
+    MEDIVH("Mage", 2829),
 
-    Rogue("Rogue", 930),
-    Maiev("Rogue", 40195),
+    ROGUE("Rogue", 930),
+    MAIEV("Rogue", 40195),
 
-    Paladin("Paladin", 671),
-    Liadrin("Paladin", 2827),
-    Arthas("Paladin", 46116),
+    PALADIN("Paladin", 671),
+    LIADRIN("Paladin", 2827),
+    ARTHAS("Paladin", 46116),
 
-    Priest("Priest", 813),
-    Tyrande("Priest", 41887),
+    PRIEST("Priest", 813),
+    TYRANDE("Priest", 41887),
 
-    Neutral("Neutral", -1);
+    NEUTRAL("Neutral", -1);
 
     companion object
     {
         @JvmStatic
         fun getById(id: Int): PlayerClass
         {
-            return PlayerClass.values().find { it.id == id } ?: Neutral
+            return PlayerClass.values().find { it.id == id } ?: NEUTRAL
         }
     }
 }

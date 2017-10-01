@@ -72,7 +72,7 @@ open class Card : Comparable<Card>
     var race: String = ""
     @Expose
     @SerializedName("playerClass")
-    var playerClass: PlayerClass? = PlayerClass.Neutral
+    var playerClass: PlayerClass? = PlayerClass.NEUTRAL
     @Expose
     @SerializedName("img")
     var img: String = ""
