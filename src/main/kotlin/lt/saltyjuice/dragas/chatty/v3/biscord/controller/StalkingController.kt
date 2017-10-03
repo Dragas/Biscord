@@ -46,8 +46,17 @@ class StalkingController : Controller
     @When("containsID")
     fun onStalkRequest(request: Message)
     {
-        val user = DiscordConnectionController.getUser(request.channelId, request.content) ?: return
-        extractData(user.user)
+        var user = DiscordConnectionController.getUser(request.channelId, request.content)?.user
+        if (user == null)
+        {
+            user = User().apply()
+            {
+                username = "!Unavailable!"
+                discriminator = "!Unavailable!"
+                id = request.content
+            }
+        }
+        extractData(user)
     }
 
     fun containsID(request: Message): Boolean
