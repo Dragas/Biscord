@@ -46,7 +46,7 @@ class CardController : Controller
         val list = cardWorker
                 .getCards()
                 .parallelStream()
-                .map(this::buildMessage)
+                .map { if (cardWorker.isImage()) buildImage(it) else buildMessage(it) }
                 .toList()
                 .toMutableList()
         if (list.isEmpty())
@@ -76,7 +76,13 @@ class CardController : Controller
                 .appendLine("[Set: ${it.cardSet}]")
                 .appendLine(it.text)
                 .endCodeSnippet()
-                .appendLine("https://hsreplay.net/cards/${it.dbfId}")
+                .appendLine(it.getStatisticsURL())
+    }
+
+    fun buildImage(it: Card): MessageBuilder
+    {
+        return MessageBuilder()
+                .appendLine(it.img)
     }
 
     companion object : Callback<Set<Card>>

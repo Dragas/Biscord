@@ -113,6 +113,11 @@ class CardWorker(private val request: Message)
         return arguments.isNotEmpty()
     }
 
+    fun isImage(): Boolean
+    {
+        return shouldBeImage
+    }
+
     private fun checkValidity()
     {
         if (!isValid())
