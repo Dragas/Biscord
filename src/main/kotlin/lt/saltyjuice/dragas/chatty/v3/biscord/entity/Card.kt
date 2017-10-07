@@ -96,4 +96,9 @@ open class Card : Comparable<Card>
     @Expose
     @SerializedName("durability")
     var durability: Int = 0
+
+    fun getStatisticsURL(): String
+    {
+        return "https://hsreplay.net/cards/$dbfId"
+    }
 }
