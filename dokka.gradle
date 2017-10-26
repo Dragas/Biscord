@@ -1,0 +1,19 @@
+apply plugin: 'org.jetbrains.dokka'
+buildscript {
+    ext.dokka_version = "0.9.15"
+    repositories {
+        mavenCentral()
+        jcenter()
+    }
+    dependencies {
+        classpath "org.jetbrains.dokka:dokka-gradle-plugin:${dokka_version}"
+    }
+}
+dokka {
+    outputFormat = "javadoc"
+    outputDirectory = "$buildDir/kdoc"
+    kotlinTasks {
+        defaultKotlinTasks() + [':compileKotlin']
+    }
+    skipDeprecated = true
+}

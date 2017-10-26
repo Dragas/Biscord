@@ -1,0 +1,14 @@
+apply plugin: 'jacoco'
+
+task codeCoverageReport(type: JacocoReport) {
+    executionData fileTree(project.rootDir.absolutePath).include("**/build/jacoco/*.exec")
+    sourceSets this.sourceSets.main
+    reports {
+        xml.setEnabled true
+        xml.destination new File("${buildDir}/reports/jacoco/report.xml")
+        html.setEnabled false
+        csv.setEnabled false
+    }
+}
+
+codeCoverageReport.dependsOn(test)
