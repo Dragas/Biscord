@@ -1,6 +1,7 @@
 package lt.saltyjuice.dragas.chatty.v3.biscord
 
 import lt.saltyjuice.dragas.chatty.v3.biscord.entity.Card
+import lt.saltyjuice.dragas.chatty.v3.biscord.mock.MockCardController
 import lt.saltyjuice.dragas.chatty.v3.biscord.utility.DeckWorker
 import org.junit.Assert
 import org.junit.BeforeClass

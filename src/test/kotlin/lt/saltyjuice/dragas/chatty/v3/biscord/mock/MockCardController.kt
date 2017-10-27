@@ -1,4 +1,4 @@
-package lt.saltyjuice.dragas.chatty.v3.biscord
+package lt.saltyjuice.dragas.chatty.v3.biscord.mock
 
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
