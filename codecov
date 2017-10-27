@@ -1,5 +1,4 @@
 #!/bin/bash -e
 
-./gradlew -g /cache/.gradle check
-./gradlew codeCoverageReport
-bash <(curl -s https://codecov.io/bash)
+./gradlew codeCoverageReport --info
+bash <(curl -s https://codecov.io/bash) -t $CODECOV_TOKEN

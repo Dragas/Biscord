@@ -20,6 +20,7 @@ open class CardCommand : Command
     private var shouldFindById: Boolean = false
     private var cardName: String = ""
     private var channelId: String = ""
+    private var list: Collection<Card> = mutableListOf()
 
     @Modifier("chid")
     fun appendChannelId(id: String)
@@ -58,28 +59,58 @@ open class CardCommand : Command
     }
 
     @Modifier("n")
-    fun mainArgument(cardName: String)
+    fun cardName(cardName: String)
     {
         this.cardName = exceptionMap.getOrDefault(cardName, cardName)
     }
 
     override fun execute()
     {
+        if (!validate())
+            return
+        list = getCardList()
+        if (list.isEmpty())
+        {
+            onNoCardsFound()
+            return
+        }
+        list
+                .parallelStream()
+                .map(this::buildMessage)
+                .forEach { if (channelId.isNotBlank()) it.send() }
+    }
+
+    protected open fun onNoCardsFound()
+    {
         if (cardName.isEmpty())
         {
             MessageBuilder().append("Card names need to be prepended with `-n `").send(channelId)
             return
         }
+        MessageBuilder()
+                .append("Unable to find any cards ")
+                .apply { if (shouldFindById) append("with id ") else append("that are like ") }
+                .append(cardName)
+                .send(channelId)
+    }
+
+    open fun validate(): Boolean
+    {
         if (shouldBeGold)
         {
-            MessageBuilder()
-                    .append("Due to changes in how cards are obtained, GOLDEN versions are unavailable. Just omit the -g/--gold modifier")
-                    .send(channelId)
-            return
+            if (channelId.isNotBlank())
+                MessageBuilder()
+                        .append("Due to changes in how cards are obtained, GOLDEN versions are unavailable. Just omit the -g/--gold modifier")
+                        .send(channelId)
+            return false
         }
+        return true
+    }
+
+    fun getCardList(): Collection<Card>
+    {
         val initialFilter = if (shouldBeMany) this::filterForMany else this::filterForSingle
         val initialList = if (shouldIncludeCreated) CardController.getCards() else CardController.getCollectable()
-        val buildingMethod = if (shouldBeImage) this::buildImage else this::buildMessage
         var cards = getCards(initialList, initialFilter)
         if (shouldFindById)
         {
@@ -90,6 +121,7 @@ open class CardCommand : Command
             }
             catch (err: NumberFormatException)
             {
+                cards = listOf()
             }
         }
         else
@@ -107,23 +139,9 @@ open class CardCommand : Command
                 cards = cards.toTypedArray()[0].entourages
             }
         }
-        val list = cards
-                .parallelStream()
-                .map(buildingMethod)
-                .toList()
-                .toMutableList()
-        if (list.isEmpty())
-        {
-            MessageBuilder()
-                    .append("Unable to find any cards ")
-                    .apply { if (shouldFindById) append("with id ") else append("that are like ") }
-                    .append(cardName)
-                    .send(channelId)
-            return
-        }
-        list.forEach { it.send() }
-    }
+        return cards
 
+    }
 
     private fun filterForSingle(it: Card): Boolean
     {
@@ -146,19 +164,28 @@ open class CardCommand : Command
 
     private fun buildMessage(it: Card): MessageBuilder
     {
+        return if (shouldBeImage) buildImage(it) else buildTextMessage(it)
+    }
+
+    private fun buildTextMessage(it: Card): MessageBuilder
+    {
         return MessageBuilder(channelId)
                 .beginCodeSnippet("markdown")
                 .appendLine("[${it.name}][${it.cardId}][${it.dbfId}]")
                 .append("[${it.cost} Mana, ${it.playerClass} ${it.rarity} ")
                 .apply()
                 {
-                    when
+                    when (it.type)
                     {
-                        it.type == Type.MINION -> this.append("${it.attack}/${it.health} ")
-                        it.type == Type.WEAPON -> this.append("${it.attack}/${it.durability}")
+                        Type.MINION -> append("${it.attack}/${it.health} ")
+                        Type.WEAPON -> append("${it.attack}/${it.durability}")
+                        Type.HERO -> append("${it.armor} Armor")
+                        Type.SPELL ->
+                        {
+                        }
                     }
                 }
-                .appendLine("${it.type?.name}]")
+                .appendLine("${it.type}]")
                 .appendLine("[Set: ${it.cardSet}]")
                 .appendLine(it.text)
                 .endCodeSnippet()
@@ -167,8 +194,9 @@ open class CardCommand : Command
 
     private fun buildImage(it: Card): MessageBuilder
     {
+        val img = if (shouldBeGold) it.imgGold else it.img
         return MessageBuilder(channelId)
-                .appendLine(it.img)
+                .appendLine(img)
     }
 
     companion object

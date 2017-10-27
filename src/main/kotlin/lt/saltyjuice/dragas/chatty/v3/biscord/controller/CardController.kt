@@ -20,6 +20,7 @@ import kotlin.streams.toList
 
 class CardController : Controller
 {
+    @Deprecated("use HSCardController instead")
     fun isCardRequest(request: Message): Boolean
     {
         return request.mentionsMe().doIf { request.clearMyMentions() } &&
@@ -31,6 +32,7 @@ class CardController : Controller
 
     @On(EventMessageCreate::class)
     @When("isCardRequest")
+    @Deprecated("use HSCardController instead")
     fun onCardRequest(request: Message)
     {
         MessageBuilder(request.channelId).append("Note: `card` is deprecated. Use `hscard` instead. Syntax is the same anyways except for card names, which need to follow `-n [cardname]` convention.").send()
