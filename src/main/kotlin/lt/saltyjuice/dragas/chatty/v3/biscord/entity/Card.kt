@@ -29,7 +29,7 @@ open class Card : Comparable<Card>
     var cardSet: String = ""
     @Expose
     @SerializedName("type")
-    var type: String = ""
+    var type: Type? = Type.SPELL
     @Expose
     @SerializedName("faction")
     var faction: String = ""

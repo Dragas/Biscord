@@ -6,7 +6,6 @@ import kotlinx.coroutines.experimental.channels.produce
 import kotlinx.coroutines.experimental.runBlocking
 import lt.saltyjuice.dragas.chatty.v3.biscord.controller.CardController
 import lt.saltyjuice.dragas.chatty.v3.biscord.entity.Card
-import lt.saltyjuice.dragas.chatty.v3.biscord.entity.PlayerClass
 import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.collections.HashMap
@@ -17,7 +16,7 @@ open class DeckWorker(private val hash: String)
     private var offset = AtomicInteger(0)
     private var version: Int = 0 // should be 1
     private var numberOfHeroes: Int = 0 // should be 1
-    private var heroClass: PlayerClass = PlayerClass.NEUTRAL // should be something else
+    private var heroClass: Optional<Card> = Optional.empty()// should be something else
     private var format: Format = Format.Invalid // 0 implies invalid
     private var valid = false
     private var deck: HashMap<Card, Int> = HashMap()
@@ -86,7 +85,7 @@ open class DeckWorker(private val hash: String)
     private fun readHero(): Boolean
     {
         val playerClassInt = readInt()
-        heroClass = PlayerClass.getById(playerClassInt)
+        heroClass = CardController.getCardById(playerClassInt)
         return true //heroClass != PlayerClass.Neutral
     }
 
@@ -125,10 +124,10 @@ open class DeckWorker(private val hash: String)
 
     private fun addCards(where: MutableCollection<Int>, multiplier: Int = 1)
     {
-        val count = runBlocking { producerJob.receive() }
+        val count = runBlocking { producerJob.receiveOrNull() ?: -1 }
         repeat(count)
         {
-            val id = runBlocking { producerJob.receive() }
+            val id = runBlocking { producerJob.receiveOrNull() ?: -1 }
             repeat(multiplier) { where.add(id) }
         }
     }
@@ -154,7 +153,7 @@ open class DeckWorker(private val hash: String)
         return this.format
     }
 
-    open fun getClass(): PlayerClass
+    open fun getClass(): Optional<Card>
     {
         return this.heroClass
     }

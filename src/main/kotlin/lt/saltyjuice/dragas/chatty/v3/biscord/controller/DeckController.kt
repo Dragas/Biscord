@@ -36,7 +36,7 @@ open class DeckController : Controller
     open fun toMessageBuilder(worker: DeckWorker): MessageBuilder
     {
         val messageBuilder = MessageBuilder()
-        messageBuilder.appendLine("# Class: ${worker.getClass().name} (${worker.getClass().value})")
+        worker.getClass().ifPresent { messageBuilder.appendLine("# Hero: ${it.name})").appendLine("# Class : ${it.playerClass}") }
         messageBuilder.appendLine("# Format: ${worker.getFormat().name}")
         messageBuilder.appendLine("")
         worker.getAsDeck().toList()
