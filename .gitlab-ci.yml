@@ -39,7 +39,8 @@ build:
 test:
   stage: test
   script:
-    - ./gradlew -g /cache/.gradle check
+    - chmod +x codecov
+    - ./codecov
 
 deploy-to-svn:
   stage: deploy
