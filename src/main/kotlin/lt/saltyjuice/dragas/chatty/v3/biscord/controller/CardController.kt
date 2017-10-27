@@ -73,7 +73,7 @@ class CardController : Controller
                         it.type == Type.WEAPON -> this.append("${it.attack}/${it.durability}")
                     }
                 }
-                .appendLine("${it.type?.name}]")
+                .appendLine("${it.type}]")
                 .appendLine("[Set: ${it.cardSet}]")
                 .appendLine(it.text)
                 .endCodeSnippet()
