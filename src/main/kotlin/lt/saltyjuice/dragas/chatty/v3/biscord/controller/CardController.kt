@@ -33,6 +33,7 @@ class CardController : Controller
     @When("isCardRequest")
     fun onCardRequest(request: Message)
     {
+        MessageBuilder(request.channelId).append("Note: `card` is deprecated. Use `hscard` instead. Syntax is the same anyways except for card names, which need to follow `-n [cardname]` convention.").send()
         val cardWorker = CardWorker(request)
         if (cardWorker.isGold())
         {

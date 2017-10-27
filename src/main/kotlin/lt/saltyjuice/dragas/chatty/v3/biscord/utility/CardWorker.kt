@@ -8,6 +8,7 @@ import lt.saltyjuice.dragas.chatty.v3.discord.message.general.Message
 import java.util.*
 import kotlin.streams.toList
 
+@Deprecated("Use card command instead")
 class CardWorker(private val request: Message)
 {
     private var arguments = Array(1, { "" })
