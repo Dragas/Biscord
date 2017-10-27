@@ -121,6 +121,7 @@ open class CardCommand : Command
             }
             catch (err: NumberFormatException)
             {
+                cards = listOf()
             }
         }
         else
