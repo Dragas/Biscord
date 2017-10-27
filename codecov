@@ -1,5 +1,4 @@
 #!/bin/bash -e
 
-./gradlew -g /cache/.gradle check --info
 ./gradlew codeCoverageReport --info
 bash <(curl -s https://codecov.io/bash)
