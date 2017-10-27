@@ -29,7 +29,7 @@ open class Card : Comparable<Card>
     var cardSet: String = ""
     @Expose
     @SerializedName("type")
-    var type: Type? = Type.SPELL
+    var type: String = ""
     @Expose
     @SerializedName("faction")
     var faction: String = ""
@@ -72,7 +72,7 @@ open class Card : Comparable<Card>
     var race: String = ""
     @Expose
     @SerializedName("playerClass")
-    var playerClass: PlayerClass? = PlayerClass.NEUTRAL
+    var playerClass: String = ""
     @Expose
     @SerializedName("img")
     var img: String = ""
