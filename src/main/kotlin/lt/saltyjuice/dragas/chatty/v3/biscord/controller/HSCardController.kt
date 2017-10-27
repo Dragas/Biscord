@@ -13,11 +13,6 @@ import lt.saltyjuice.dragas.utility.kommander.worker.WorkerBuilder
 
 class HSCardController : Controller
 {
-    init
-    {
-        println("Am I real?")
-    }
-
     fun isCardRequest(request: Message): Boolean
     {
         return request.mentionsMe().doIf { request.clearMyMentions() } &&
