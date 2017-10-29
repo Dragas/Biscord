@@ -1,5 +1,5 @@
 #!/bin/bash -e
-
+chmod -x svndeployer
 apt-get -y update && apt-get -y install git-svn
 printf "[svn-remote \"svn\"]\\n" >> ./.git/config
 printf "\\turl =$SVN_URL\\n" >> ./.git/config
