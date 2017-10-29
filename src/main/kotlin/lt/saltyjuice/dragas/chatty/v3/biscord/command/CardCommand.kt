@@ -70,41 +70,49 @@ open class CardCommand : Command
             return
         list = getCardList()
         if (list.isEmpty())
-        {
-            onNoCardsFound()
-            return
-        }
+            onFailure()
+        else
+            onSuccess()
+    }
+
+    protected open fun onSuccess()
+    {
         list
                 .parallelStream()
                 .map(this::buildMessage)
                 .forEach { if (channelId.isNotBlank()) it.send() }
     }
 
-    protected open fun onNoCardsFound()
+    protected open fun onFailure()
     {
-        if (cardName.isEmpty())
-        {
-            MessageBuilder().append("Card names need to be prepended with `-n `").send(channelId)
-            return
-        }
-        MessageBuilder()
-                .append("Unable to find any cards ")
-                .apply { if (shouldFindById) append("with id ") else append("that are like ") }
-                .append(cardName)
-                .send(channelId)
+        val sb = StringBuilder()
+        sb.append("Unable to find any cards ")
+        if (shouldFindById)
+            sb.append("with id ")
+        else
+            sb.append("that are like ")
+        sb.append(cardName)
+        onError(sb.toString())
     }
 
     open fun validate(): Boolean
     {
         if (shouldBeGold)
         {
-            if (channelId.isNotBlank())
-                MessageBuilder()
-                        .append("Due to changes in how cards are obtained, GOLDEN versions are unavailable. Just omit the -g/--gold modifier")
-                        .send(channelId)
+            onError("Due to changes in how cards are obtained, GOLDEN versions are unavailable. Just omit the -g/--gold modifier")
+            return false
+        }
+        if (cardName.isBlank())
+        {
+            onError("Card names need to be prepended with `-n `")
             return false
         }
         return true
+    }
+
+    protected open fun onError(message: String)
+    {
+        if (channelId.isNotBlank()) MessageBuilder().append(message).send(channelId)
     }
 
     fun getCardList(): Collection<Card>
