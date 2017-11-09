@@ -24,6 +24,7 @@ import lt.saltyjuice.dragas.utility.khan4.Khan
 import lt.saltyjuice.dragas.utility.khan4.entity.Page
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.streams.toList
 import lt.saltyjuice.dragas.utility.khan4.entity.Thread as KhanThread
 
 class StalkingController : Controller
@@ -215,22 +216,36 @@ class StalkingController : Controller
     fun stalkThreads(): Job = launch(Unconfined)
     {
 
-        Khan
+        val threads = Khan
                 .getCatalog("vg")
                 .body()
-                ?.parallelStream()
-                ?.map(Page<KhanThread>::threads)
-                ?.flatMap(List<KhanThread>::stream)
-                ?.filter { it.subject.contains("hsg", true) || it.comment.contains("playhearthstone", true) }
-                ?.filter { it.replyCount > postNotificationCount }
-                ?.map(this@StalkingController::threadToMessage)
-                ?.forEach { it.send(officeChannel) }
+        if (threads != null)
+        {
+            val actualThreads = threads
+                    .parallelStream()
+                    .map(Page<KhanThread>::threads)
+                    .flatMap(List<KhanThread>::stream)
+                    .toList()
+            actualThreads
+                    .parallelStream()
+                    .map(KhanThread::postNumber)
+                    .toList()
+                    .run(threadsItShouldntNotifyAbout::retainAll)
+            actualThreads
+                    .parallelStream()
+                    .filter { threadsItShouldntNotifyAbout.contains(it.postNumber) }
+                    .filter { it.subject.contains("hsg", true) || it.comment.contains("playhearthstone", true) }
+                    .filter { it.replyCount > postNotificationCount }
+                    .map(this@StalkingController::threadToMessage)
+                    .forEach { it.send(officeChannel) }
+        }
         delay(threadStalkRate)
         stalkThreads()
     }
 
     fun threadToMessage(thread: KhanThread): MessageBuilder
     {
+        threadsItShouldntNotifyAbout.add(thread.postNumber)
         val mb = MessageBuilder()
                 .appendLine("@here")
                 .append("Thread named ${thread.subject} (${thread.postNumber}) is at ${thread.replyCount} post")
@@ -244,6 +259,8 @@ class StalkingController : Controller
 
     companion object
     {
+        @JvmStatic
+        private val threadsItShouldntNotifyAbout = Collections.synchronizedList(ArrayList<Long>())
         @JvmStatic
         private val second = 1000L
 
