@@ -1,5 +1,9 @@
 package lt.saltyjuice.dragas.chatty.v3.biscord.controller
 
+import kotlinx.coroutines.experimental.Job
+import kotlinx.coroutines.experimental.Unconfined
+import kotlinx.coroutines.experimental.delay
+import kotlinx.coroutines.experimental.launch
 import lt.saltyjuice.dragas.chatty.v3.biscord.clearMyMentions
 import lt.saltyjuice.dragas.chatty.v3.biscord.doIf
 import lt.saltyjuice.dragas.chatty.v3.core.controller.Controller
@@ -16,12 +20,19 @@ import lt.saltyjuice.dragas.chatty.v3.discord.message.general.Channel
 import lt.saltyjuice.dragas.chatty.v3.discord.message.general.Message
 import lt.saltyjuice.dragas.chatty.v3.discord.message.general.User
 import lt.saltyjuice.dragas.chatty.v3.discord.message.response.ChannelBuilder
+import lt.saltyjuice.dragas.utility.khan4.Khan
+import lt.saltyjuice.dragas.utility.khan4.entity.Page
 import java.text.SimpleDateFormat
 import java.util.*
-
+import lt.saltyjuice.dragas.utility.khan4.entity.Thread as KhanThread
 
 class StalkingController : Controller
 {
+    init
+    {
+        stalkThreads()
+    }
+
     @On(EventMessageCreate::class)
     fun onMessage(request: Message)
     {
@@ -109,7 +120,6 @@ class StalkingController : Controller
         }
     }
 
-
     fun initiateChannel(author: User): Channel?
     {
         try
@@ -123,6 +133,7 @@ class StalkingController : Controller
         }
         return null
     }
+
 
     fun deleteMessage(message: Message)
     {
@@ -201,6 +212,36 @@ class StalkingController : Controller
             sb.append(", ")
     }
 
+    fun stalkThreads(): Job = launch(Unconfined)
+    {
+
+        Khan
+                .getCatalog("vg")
+                .body()
+                ?.parallelStream()
+                ?.map(Page<KhanThread>::threads)
+                ?.flatMap(List<KhanThread>::stream)
+                ?.filter { it.subject.contains("hsg", true) || it.comment.contains("playhearthstone", true) }
+                ?.filter { it.replyCount > postNotificationCount }
+                ?.map(this@StalkingController::threadToMessage)
+                ?.forEach { it.send(officeChannel) }
+        delay(threadStalkRate)
+        stalkThreads()
+    }
+
+    fun threadToMessage(thread: KhanThread): MessageBuilder
+    {
+        val mb = MessageBuilder()
+                .appendLine("@here")
+                .append("Thread named ${thread.subject} (${thread.postNumber}) is at ${thread.replyCount} post")
+        if (thread.replyCount != 1)
+            mb.appendLine("s")
+        mb
+                .appendLine("You should probably make a new thread.")
+                .appendLine("Oh and notify the guys at https://boards.4chan.org/vg/thread/${thread.postNumber}")
+        return mb
+    }
+
     companion object
     {
         @JvmStatic
@@ -223,6 +264,12 @@ class StalkingController : Controller
 
         @JvmStatic
         private val officeChannel = System.getenv("office_id")
+
+        @JvmStatic
+        private val threadStalkRate = System.getenv("stalk_delay").toLong()
+
+        @JvmStatic
+        private val postNotificationCount = System.getenv("stalk_post_count").toInt()
 
         @JvmStatic
         private val sdf = SimpleDateFormat("YYYY-MM-dd HH:mm:ss z")
