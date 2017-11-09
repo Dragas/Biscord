@@ -233,7 +233,7 @@ class StalkingController : Controller
                     .run(threadsItShouldntNotifyAbout::retainAll)
             actualThreads
                     .parallelStream()
-                    .filter { threadsItShouldntNotifyAbout.contains(it.postNumber) }
+                    .filter { !threadsItShouldntNotifyAbout.contains(it.postNumber) }
                     .filter { it.subject.contains("hsg", true) || it.comment.contains("playhearthstone", true) }
                     .filter { it.replyCount > postNotificationCount }
                     .map(this@StalkingController::threadToMessage)
