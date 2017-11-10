@@ -2,90 +2,113 @@ package lt.saltyjuice.dragas.chatty.v3.biscord.entity
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
+import javax.persistence.*
 
+@Entity
+@Table(name = "cards")
 open class Card : Comparable<Card>
 {
     @Expose
     @SerializedName("id")
-    var cardId: String = ""
+    open var cardId: String = ""
 
     @Expose
     @SerializedName("dbfId")
-    var dbfId: Int = -1
+    @Id
+    open var dbfId: Int = -1
+
     @Expose
     @SerializedName("name")
-    var name: String = ""
+    open var name: String = ""
+
     @Expose
     @SerializedName("set")
-    var cardSet: String = ""
+    open var cardSet: String = ""
+
     @Expose
     @SerializedName("type")
-    var type: Type? = Type.SPELL
+    open var type: Type? = Type.SPELL
+
     @Expose
     @SerializedName("faction")
-    var faction: String = ""
+    open var faction: String = ""
+
     @Expose
     @SerializedName("rarity")
-    var rarity: String = ""
+    open var rarity: String = ""
+
     @Expose
     @SerializedName("cost")
-    var cost: Int = 0
+    open var cost: Int = 0
+
     @Expose
     @SerializedName("attack")
-    var attack: Int = 0
+    open var attack: Int = 0
+
     @Expose
     @SerializedName("health")
-    var health: Int = 0
+    open var health: Int = 0
+
     @Expose
     @SerializedName("armor")
-    var armor: Int = 0
+    open var armor: Int = 0
+
     @Expose
     @SerializedName("text")
-    var text: String = ""
+    open var text: String = ""
+
     @Expose
     @SerializedName("flavor")
-    var flavor: String = ""
+    open var flavor: String = ""
+
     @Expose
     @SerializedName("entourage")
-    var entourage: List<String> = ArrayList()
-    var entourages: List<Card> = ArrayList()
+    @Column(columnDefinition = "text[]")
+    open var entourage: Array<String> = arrayOf()
+
+
+    @Transient
+    open var entourages: List<Card> = ArrayList()
+
     @Expose
     @SerializedName("artist")
-    var artist: String = ""
+    open var artist: String = ""
+
     @Expose
     @SerializedName("collectible")
-    var collectible: Boolean = false
+    open var collectible: Boolean = false
+
     @Expose
     @SerializedName("elite")
-    var elite: String = ""
+    open var elite: String = ""
+
     @Expose
     @SerializedName("race")
-    var race: String = ""
+    open var race: String = ""
+
     @Expose
     @SerializedName("playerClass")
-    var playerClass: String = ""
+    open var playerClass: String = ""
+
     @Expose
     @SerializedName("img")
-    var img: String = ""
+    @Transient
+    open var img: String = ""
         get()
         {
             return "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/$cardId.png"
         }
+
     @Expose
     @SerializedName("imgGold")
-    var imgGold: String = ""
-    @Expose
-    @SerializedName("locale")
-    var locale: String = ""
-    @Expose
-    @SerializedName("howToGet")
-    var howToGet: String = ""
-    @Expose
-    @SerializedName("howToGetGold")
-    var howToGetGold: String = ""
+    @Transient
+    open var imgGold: String = ""
+
+
     @Expose
     @SerializedName("durability")
-    var durability: Int = 0
+    open var durability: Int = 0
+
 
     fun getStatisticsURL(): String
     {

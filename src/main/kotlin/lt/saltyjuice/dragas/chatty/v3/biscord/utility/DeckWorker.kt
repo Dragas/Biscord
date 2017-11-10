@@ -114,7 +114,7 @@ open class DeckWorker(private val hash: String)
             addCards(list, 2)
             addCardMultiples(list)
             list
-                    .map(CardController.Companion::getCardById)
+                    .map(CardController::getCardById)
                     .filter(Optional<Card>::isPresent)
                     .map(Optional<Card>::get)
                     .forEach(this::addCard)

@@ -15,7 +15,6 @@ fun main(args: Array<String>) = runBlocking<Unit>
     RateLimitInterceptor.shouldWait = true
     CardController.initialize()
     DiscordClient(
-            CardController::class.java,
             DiscordConnectionController::class.java,
             DeckController::class.java,
             StalkingController::class.java,
