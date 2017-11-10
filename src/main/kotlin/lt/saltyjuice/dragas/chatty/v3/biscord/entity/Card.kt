@@ -5,19 +5,10 @@ import com.google.gson.annotations.SerializedName
 
 open class Card : Comparable<Card>
 {
-    /**
-     * Compares this object with the specified object for order. Returns zero if this object is equal
-     * to the specified [other] object, a negative number if it's less than [other], or a positive number
-     * if it's greater than [other].
-     */
-    override fun compareTo(other: Card): Int
-    {
-        return dbfId - other.dbfId
-    }
-
     @Expose
     @SerializedName("id")
     var cardId: String = ""
+
     @Expose
     @SerializedName("dbfId")
     var dbfId: Int = -1
@@ -92,7 +83,6 @@ open class Card : Comparable<Card>
     @Expose
     @SerializedName("howToGetGold")
     var howToGetGold: String = ""
-
     @Expose
     @SerializedName("durability")
     var durability: Int = 0
@@ -100,5 +90,15 @@ open class Card : Comparable<Card>
     fun getStatisticsURL(): String
     {
         return "https://hsreplay.net/cards/$dbfId"
+    }
+
+    /**
+     * Compares this object with the specified object for order. Returns zero if this object is equal
+     * to the specified [other] object, a negative number if it's less than [other], or a positive number
+     * if it's greater than [other].
+     */
+    override fun compareTo(other: Card): Int
+    {
+        return dbfId - other.dbfId
     }
 }
