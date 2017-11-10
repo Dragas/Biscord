@@ -1,0 +1,18 @@
+String env = System.getenv("DATABASE_URL").replaceFirst("user", "Mantas")
+String dbURL = env.replaceFirst("postgres:", "postgresql:").replaceFirst("/\\w+:?\\w*@", "/")
+URI parsed = new URI(env.replaceFirst("jdbc:", ""))
+List<String> userInfo = parsed.userInfo.split(":").toList()
+/*
+println(parsed.getUserInfo())
+println(parsed)
+println(dbURL)
+String[] userInfo = parsed.getUserInfo().split(":")*/
+
+flyway {
+    driver = "org.postgresql.Driver"
+    url = dbURL
+    user = userInfo[0]
+    password = userInfo[1] ?: ""
+}
+
+installDist.dependsOn(flywayMigrate)
