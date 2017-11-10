@@ -5,7 +5,7 @@ List<String> userInfo = parsed.userInfo.split(":").toList()
 
 
 task prepareHibernate {
-    File hibernateProperties = new File("hibernate.properties")
+    File hibernateProperties = new File("src/main/resources/hibernate.properties")
     PrintWriter sout = new PrintWriter(hibernateProperties)
     sout.println("hibernate.connection.driver_class = \"org.postgresql.Driver\"")
     sout.println("hibernate.connection.url = \"$dbURL\"")
