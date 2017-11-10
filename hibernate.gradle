@@ -12,6 +12,6 @@ task prepareHibernate {
     if (userInfo[0] != null)
         sout.println("hibernate.connection.username = \"${userInfo[0]}\"")
     if (userInfo[1] != null)
-        sout.println("hibernate.connection.password = \"${userInfo[1] ?: ""}\"")
+        sout.println("hibernate.connection.password = \"${userInfo[1]}\"")
     sout.close()
 }
