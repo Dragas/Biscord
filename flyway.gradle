@@ -12,4 +12,4 @@ flyway {
 }
 
 installDist.dependsOn(flywayMigrate)
-test.dependsOn(flywayMigrate)
+//test.dependsOn(flywayMigrate)
