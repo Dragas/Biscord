@@ -38,11 +38,10 @@ repositories {
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
     compile "lt.saltyjuice.dragas:chatty-discord:0.4.3-SNAPSHOT"
-    // https://mvnrepository.com/artifact/org.jsoup/jsoup
-    compile group: 'org.jsoup', name: 'jsoup', version: '1.10.3'
     compile "lt.saltyjuice.dragas.utility:kommander:0.1.1-SNAPSHOT"
     compile "lt.saltyjuice.dragas:khan4:1.0.0"
     compile 'org.postgresql:postgresql:42.1.4'
+    compile 'org.hibernate:hibernate-core:5.2.12.Final'
     //compile 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.18'
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
@@ -56,4 +55,5 @@ compileTestKotlin {
 
 apply from: "dokka.gradle"
 apply from: "jacoco.gradle"
+apply from: "hibernate.gradle"
 apply from: "flyway.gradle"

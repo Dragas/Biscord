@@ -1,0 +1,17 @@
+String env = System.getenv("DATABASE_URL").replaceFirst("user", "Mantas")
+String dbURL = env.replaceFirst("postgres:", "postgresql:").replaceFirst("/\\w+:?\\w*@", "/")
+URI parsed = new URI(env.replaceFirst("jdbc:", ""))
+List<String> userInfo = parsed.userInfo.split(":").toList()
+
+
+task prepareHibernate {
+    File hibernateProperties = new File("hibernate.properties")
+    PrintWriter sout = new PrintWriter(hibernateProperties)
+    sout.println("hibernate.connection.driver_class = \"org.postgresql.Driver\"")
+    sout.println("hibernate.connection.url = \"$dbURL\"")
+    if (userInfo[0] != null)
+        sout.println("hibernate.connection.username = \"${userInfo[0]}\"")
+    if (userInfo[1] != null)
+        sout.println("hibernate.connection.password = \"${userInfo[1] ?: ""}\"")
+    sout.close()
+}
