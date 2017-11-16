@@ -15,7 +15,9 @@ services:
 # isolated from any previous builds.
 variables:
     GRADLE_OPTS: "-Dorg.gradle.daemon=false"
-    POSTGRES_DB:
+    POSTGRES_DB: d3lnmvrhmjvkdp
+    POSTTGRES_USER: hhyvoymxpocpcg
+    POSTGRES_PASSWORD: bd3230fb212540a71b1ec31587bf202a346411e67db28c6c32a0b4b9253c0750
 
 # Make the gradle wrapper executable. This essentially downloads a copy of
 # Gradle to build the project with.
@@ -41,6 +43,8 @@ build:
 # Use the generated build output to run the tests.
 test:
   stage: test
+  environment:
+    name: testing
   script:
     - ./gradlew -g /cache/.gradle check --info
     - chmod +x codecov
