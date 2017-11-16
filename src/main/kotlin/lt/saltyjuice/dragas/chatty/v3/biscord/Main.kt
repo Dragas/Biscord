@@ -34,3 +34,9 @@ public fun Message.clearMyMentions()
     this.content = this.content.replace(Regex("<@!?$id>\\s*"), "")
     this.mentionedUsers.removeIf { it.id == id }
 }
+
+
+fun getenv(name: String, default: String): String
+{
+    return System.getenv(name) ?: default
+}
