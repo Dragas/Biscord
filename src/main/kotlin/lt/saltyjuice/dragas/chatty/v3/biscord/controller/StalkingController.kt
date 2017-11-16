@@ -247,13 +247,11 @@ class StalkingController : Controller
     {
         threadsItShouldntNotifyAbout.add(thread.postNumber)
         val mb = MessageBuilder()
-                .appendLine("@here")
-                .append("Thread named ${thread.subject} (${thread.postNumber}) is at ${thread.replyCount} post")
+                .appendLine("@everyone")
+                .append("Thread named ${thread.subject} (https://boards.4chan.org/vg/thread/${thread.postNumber}) is at ${thread.replyCount} post")
         if (thread.replyCount != 1)
             mb.appendLine("s")
-        mb
-                .appendLine("You should probably make a new thread.")
-                .appendLine("Oh and notify the guys at https://boards.4chan.org/vg/thread/${thread.postNumber}")
+        mb.appendLine("You should probably make a new thread.")
         return mb
     }
 
