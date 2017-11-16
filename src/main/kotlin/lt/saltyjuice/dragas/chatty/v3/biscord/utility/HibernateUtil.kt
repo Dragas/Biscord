@@ -9,14 +9,14 @@ import org.hibernate.service.ServiceRegistry
 object HibernateUtil
 {
     @JvmStatic
-    val sessionFactory: SessionFactory
+    private val sessionFactory: SessionFactory
     @JvmStatic
     private val serviceRegistry: ServiceRegistry
 
     init
     {
         serviceRegistry = StandardServiceRegistryBuilder()
-                .configure(Thread.currentThread().contextClassLoader.getResource("hibernate.cfg.xml"))
+                .configure()
                 .build()
         val metadata = MetadataSources(serviceRegistry).buildMetadata()
         sessionFactory = metadata.buildSessionFactory()
@@ -40,11 +40,18 @@ object HibernateUtil
         }
         finally
         {
+            session.transaction.commit()
             session.close()
         }
     }
 
-    fun <T> executeDetachedTransaction(transaction: ((Session) -> T)): T
+    @JvmStatic
+    fun executeSimpleTransaction(transaction: ((session: Session) -> Unit), afterTransaction: ((Session) -> Unit)? = null)
+    {
+        executeTransaction(transaction, { session, _ -> afterTransaction?.invoke(session) })
+    }
+
+    fun <T> executeDetachedTransaction(transaction: ((session: Session) -> T)): T
     {
         return executeTransaction(transaction)
         { session: Session, result: T ->
