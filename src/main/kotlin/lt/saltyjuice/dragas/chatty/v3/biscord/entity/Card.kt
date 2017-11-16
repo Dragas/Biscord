@@ -80,6 +80,11 @@ open class Card : Comparable<Card>
         {
             return "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/$cardId.png"
         }
+    val artwork: String
+        get()
+        {
+            return "https://art.hearthstonejson.com/v1/512x/$cardId.jpg"
+        }
     @Expose
     @SerializedName("imgGold")
     var imgGold: String = ""
