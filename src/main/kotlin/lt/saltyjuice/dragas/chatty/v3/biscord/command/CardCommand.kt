@@ -13,50 +13,27 @@ import kotlin.streams.toList
 @Name("hscard")
 open class CardCommand : Command
 {
+    @Modifier("c", "-creates")
     private var shouldIncludeCreated: Boolean = false
+    @Modifier("i", "-image")
     private var shouldBeImage: Boolean = false
+    @Modifier("m", "-many")
     private var shouldBeMany: Boolean = false
+    @Modifier("g", "-gold")
     private var shouldBeGold: Boolean = false
+    @Modifier("id")
     private var shouldFindById: Boolean = false
+    @Modifier("")
     private var cardName: String = ""
+    @Modifier("chid")
     private var channelId: String = ""
+    @Modifier("a", "-artwork")
+    private var shouldShowArtwork: Boolean = false
+    @Modifier("l", "-limit")
+    private var limit: Int = 10
+
     private var list: Collection<Card> = mutableListOf()
 
-    @Modifier("chid")
-    fun appendChannelId(id: String)
-    {
-        this.channelId = id
-    }
-
-    @Modifier("c", "-creates")
-    fun shouldCreate()
-    {
-        this.shouldIncludeCreated = true
-    }
-
-    @Modifier("i", "-image")
-    fun shouldShowImage()
-    {
-        this.shouldBeImage = true
-    }
-
-    @Modifier("m", "-many")
-    fun shouldShowMany()
-    {
-        this.shouldBeMany = true
-    }
-
-    @Modifier("id")
-    fun shouldBeId()
-    {
-        this.shouldFindById = true
-    }
-
-    @Modifier("g", "-gold")
-    fun shouldBeGold()
-    {
-        this.shouldBeGold = true
-    }
 
     @Modifier("n")
     fun cardName(cardName: String)
@@ -79,8 +56,9 @@ open class CardCommand : Command
     {
         list
                 .parallelStream()
+                .limit(limit.toLong())
                 .map(this::buildMessage)
-                .forEach { if (channelId.isNotBlank()) it.send() }
+                .forEach { if (channelId.isNotBlank()) it.send(channelId) }
     }
 
     protected open fun onFailure()
@@ -172,12 +150,17 @@ open class CardCommand : Command
 
     private fun buildMessage(it: Card): MessageBuilder
     {
-        return if (shouldBeImage) buildImage(it) else buildTextMessage(it)
+        return if (shouldBeImage) buildImage(it) else if (shouldShowArtwork) buildArtwork(it) else buildTextMessage(it)
     }
 
+    private fun buildArtwork(it: Card): MessageBuilder
+    {
+        return MessageBuilder()
+                .appendLine(it.artwork)
+    }
     private fun buildTextMessage(it: Card): MessageBuilder
     {
-        return MessageBuilder(channelId)
+        return MessageBuilder()
                 .beginCodeSnippet("markdown")
                 .appendLine("[${it.name}][${it.cardId}][${it.dbfId}]")
                 .append("[${it.cost} Mana, ${it.playerClass} ${it.rarity} ")
@@ -203,7 +186,7 @@ open class CardCommand : Command
     private fun buildImage(it: Card): MessageBuilder
     {
         val img = if (shouldBeGold) it.imgGold else it.img
-        return MessageBuilder(channelId)
+        return MessageBuilder()
                 .appendLine(img)
     }
 
