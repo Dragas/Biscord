@@ -14,25 +14,34 @@ import kotlin.streams.toList
 open class CardCommand : Command
 {
     @Modifier("c", "-creates")
-    private var shouldIncludeCreated: Boolean = false
+    @JvmField
+    var shouldIncludeCreated: Boolean = false
     @Modifier("i", "-image")
-    private var shouldBeImage: Boolean = false
+    @JvmField
+    var shouldBeImage: Boolean = false
     @Modifier("m", "-many")
-    private var shouldBeMany: Boolean = false
+    @JvmField
+    var shouldBeMany: Boolean = false
     @Modifier("g", "-gold")
-    private var shouldBeGold: Boolean = false
+    @JvmField
+    var shouldBeGold: Boolean = false
     @Modifier("id")
-    private var shouldFindById: Boolean = false
+    @JvmField
+    var shouldFindById: Boolean = false
     @Modifier("")
-    private var cardName: String = ""
+    @JvmField
+    var cardName: String = ""
     @Modifier("chid")
-    private var channelId: String = ""
+    @JvmField
+    var channelId: String = ""
     @Modifier("a", "-artwork")
-    private var shouldShowArtwork: Boolean = false
+    @JvmField
+    var shouldShowArtwork: Boolean = false
     @Modifier("l", "-limit")
-    private var limit: Int = 10
+    @JvmField
+    var limit: Int = 10
 
-    private var list: Collection<Card> = mutableListOf()
+    var list: Collection<Card> = mutableListOf()
 
 
     @Modifier("n")

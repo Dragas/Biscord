@@ -15,10 +15,12 @@ import retrofit2.Response
 class DeckCommand : Command
 {
     @Modifier("c", "-code")
-    private var kode: String = ""
+    @JvmField
+    var kode: String = ""
 
     @Modifier("chid")
-    private var chid: String = ""
+    @JvmField
+    var chid: String = ""
 
     override fun execute()
     {
