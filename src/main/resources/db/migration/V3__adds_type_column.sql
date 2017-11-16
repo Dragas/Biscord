@@ -1,2 +1,0 @@
-ALTER TABLE cards
-  ADD COLUMN type TEXT

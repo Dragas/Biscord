@@ -1,3 +1,0 @@
-CREATE TABLE threads (
-  id BIGINT UNIQUE PRIMARY KEY
-)
