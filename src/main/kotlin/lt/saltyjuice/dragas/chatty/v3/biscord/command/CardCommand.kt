@@ -4,6 +4,7 @@ import lt.saltyjuice.dragas.chatty.v3.biscord.controller.CardController
 import lt.saltyjuice.dragas.chatty.v3.biscord.entity.Card
 import lt.saltyjuice.dragas.chatty.v3.biscord.entity.Type
 import lt.saltyjuice.dragas.chatty.v3.discord.message.MessageBuilder
+import lt.saltyjuice.dragas.utility.kommander.annotations.Description
 import lt.saltyjuice.dragas.utility.kommander.annotations.Modifier
 import lt.saltyjuice.dragas.utility.kommander.annotations.Name
 import lt.saltyjuice.dragas.utility.kommander.main.Command
@@ -11,40 +12,51 @@ import java.util.*
 import kotlin.streams.toList
 
 @Name("hscard")
+@Description("Returns any hearthstone card you would ever want")
 open class CardCommand : Command
 {
     @Modifier("c", "-creates")
     @JvmField
+    @Description("Whether or not should the returned list consist of only created cards.")
     var shouldIncludeCreated: Boolean = false
+
     @Modifier("i", "-image")
     @JvmField
+    @Description("Whether or not should the returned list be of card images (prioritized artwork)")
     var shouldBeImage: Boolean = false
+
     @Modifier("m", "-many")
     @JvmField
+    @Description("Whether or not the result should be not exactly like the given card name")
     var shouldBeMany: Boolean = false
-    @Modifier("g", "-gold")
-    @JvmField
-    var shouldBeGold: Boolean = false
+
     @Modifier("id")
     @JvmField
+    @Description("Whether or not given card name is actually an ID")
     var shouldFindById: Boolean = false
-    @Modifier("")
-    @JvmField
-    var cardName: String = ""
+
+    private var cardName: String = ""
+
     @Modifier("chid")
     @JvmField
+    @Description("Redundant. Jeeves overrides this anyways.")
     var channelId: String = ""
+
     @Modifier("a", "-artwork")
     @JvmField
+    @Description("Whether or not the result should be an artwork.")
     var shouldShowArtwork: Boolean = false
+
     @Modifier("l", "-limit")
     @JvmField
+    @Description("How many results at most should be returned.")
     var limit: Int = 10
 
     var list: Collection<Card> = mutableListOf()
 
 
-    @Modifier("n")
+    @Modifier("")
+    @Description("Card name or card ID to look for (required)")
     fun cardName(cardName: String)
     {
         this.cardName = exceptionMap.getOrDefault(cardName, cardName)
@@ -82,13 +94,10 @@ open class CardCommand : Command
         onError(sb.toString())
     }
 
-    open fun validate(): Boolean
+    override fun validate(): Boolean
     {
-        if (shouldBeGold)
-        {
-            onError("Due to changes in how cards are obtained, GOLDEN versions are unavailable. Just omit the -g/--gold modifier")
+        if (channelId.isBlank())
             return false
-        }
         if (cardName.isBlank())
         {
             onError("Card names need to be prepended with `-n `")
@@ -194,7 +203,7 @@ open class CardCommand : Command
 
     private fun buildImage(it: Card): MessageBuilder
     {
-        val img = if (shouldBeGold) it.imgGold else it.img
+        val img = /*if (shouldBeGold) it.imgGold else*/ it.img
         return MessageBuilder()
                 .appendLine(img)
     }

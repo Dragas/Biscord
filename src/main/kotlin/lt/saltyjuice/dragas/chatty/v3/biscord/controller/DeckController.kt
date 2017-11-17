@@ -18,7 +18,7 @@ open class DeckController : Controller
                 .content
                 .split(Regex("\\s"))
                 .parallelStream()
-                .map { "deckode -c $it -chid ${request.channelId}" }
+                .map { "deckode $it -chid ${request.channelId}" }
                 .forEach(this::execute)
         /*.map(::DeckWorker)
         .filter(this::isValidWorker)

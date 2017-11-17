@@ -36,7 +36,7 @@ dependencies {
     compile 'org.hibernate:hibernate-core:5.2.12.Final'
     // https://mvnrepository.com/artifact/org.jsoup/jsoup
     compile "com.vladmihalcea:hibernate-types-52:1.1.2"
-    compile "lt.saltyjuice.dragas.utility:kommander:0.2-SNAPSHOT"
+    compile "lt.saltyjuice.dragas.utility:kommander:1.0.0"
     compile "lt.saltyjuice.dragas:khan4:1.0.1"
     //compile 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.18'
     testCompile group: 'junit', name: 'junit', version: '4.12'

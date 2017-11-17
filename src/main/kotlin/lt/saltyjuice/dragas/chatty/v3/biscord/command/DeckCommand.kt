@@ -4,6 +4,7 @@ import lt.saltyjuice.dragas.chatty.v3.biscord.entity.Card
 import lt.saltyjuice.dragas.chatty.v3.biscord.utility.DeckWorker
 import lt.saltyjuice.dragas.chatty.v3.discord.message.MessageBuilder
 import lt.saltyjuice.dragas.chatty.v3.discord.message.general.Message
+import lt.saltyjuice.dragas.utility.kommander.annotations.Description
 import lt.saltyjuice.dragas.utility.kommander.annotations.Modifier
 import lt.saltyjuice.dragas.utility.kommander.annotations.Name
 import lt.saltyjuice.dragas.utility.kommander.main.Command
@@ -12,21 +13,31 @@ import retrofit2.Callback
 import retrofit2.Response
 
 @Name("deckode")
+@Description("Decodes deck codes into more human readable forms")
 class DeckCommand : Command
 {
-    @Modifier("c", "-code")
+    private lateinit var dw: DeckWorker
+
+    @Modifier("")
     @JvmField
+    @Description("Deck code encoded in base64 as seen on various sources")
     var kode: String = ""
 
     @Modifier("chid")
     @JvmField
+    @Description("Redundant. Jeeves overrides this parameter anyways.")
     var chid: String = ""
+
+    override fun validate(): Boolean
+    {
+        if (chid.isBlank())
+            return false
+        dw = DeckWorker(kode)
+        return dw.isValid()
+    }
 
     override fun execute()
     {
-        val dw = DeckWorker(kode)
-        if (!dw.isValid())
-            return
         val deck = dw.getAsDeck()
         var messageBuilder = MessageBuilder()
         deck
