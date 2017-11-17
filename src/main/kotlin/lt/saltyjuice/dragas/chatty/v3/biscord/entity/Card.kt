@@ -2,10 +2,16 @@ package lt.saltyjuice.dragas.chatty.v3.biscord.entity
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
+import com.vladmihalcea.hibernate.type.array.StringArrayType
+import org.hibernate.annotations.Type
+import org.hibernate.annotations.TypeDef
+import org.hibernate.annotations.TypeDefs
 import javax.persistence.*
+import lt.saltyjuice.dragas.chatty.v3.biscord.entity.Type as CardType
 
 @Entity
 @Table(name = "cards")
+@TypeDefs(TypeDef(name = "string-array", typeClass = StringArrayType::class))
 open class Card : Comparable<Card>
 {
     @Expose
@@ -27,7 +33,7 @@ open class Card : Comparable<Card>
 
     @Expose
     @SerializedName("type")
-    open var type: Type? = Type.SPELL
+    open var type: CardType? = CardType.SPELL
 
     @Expose
     @SerializedName("faction")
@@ -64,6 +70,7 @@ open class Card : Comparable<Card>
     @Expose
     @SerializedName("entourage")
     @Column(columnDefinition = "text[]")
+    @Type(type = "string-array")
     open var entourage: Array<String> = arrayOf()
 
 
