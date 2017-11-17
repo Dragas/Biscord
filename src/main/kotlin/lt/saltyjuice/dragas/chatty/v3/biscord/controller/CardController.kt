@@ -44,12 +44,12 @@ object CardController : Callback<Set<Card>>
 
     fun initializeFromDatabase(): Boolean
     {
-        val result = HibernateUtil.executeDetachedTransaction()
+        val result = HibernateUtil.executeTransaction(
         { session ->
             val query: Query<Card> = session.createQuery("from Card", Card::class.java)
             val result = query.resultList
             result.toSet()
-        }
+        })
         return result.isNotEmpty().doIf { consumeCards(result) }
     }
 
@@ -130,9 +130,7 @@ object CardController : Callback<Set<Card>>
     {
         HibernateUtil.executeTransaction<Unit>({ session ->
             cardss
-                    .parallelStream()
-                    .forEach(session::persist)
-            session.flush()
+                    .forEach(session::saveOrUpdate)
         })
     }
 
