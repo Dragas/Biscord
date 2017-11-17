@@ -218,35 +218,43 @@ class StalkingController : Controller
 
     fun stalkThreads(): Job = launch(Unconfined)
     {
-        val threads = Khan
-                .getCatalog("vg")
-                .body()
-        if (threads != null)
+        try
         {
-            val actualThreads = threads
-                    .parallelStream()
-                    .map(Page<KhanThread>::threads)
-                    .flatMap(List<KhanThread>::stream)
-                    .toList()
-            val actualThreadIds = actualThreads.map(KhanThread::postNumber)
-            val threadsItShouldIgnore = HibernateUtil.executeDetachedTransaction { session ->
-                session
-                        .createQuery("delete from KThread where id not in :list", KThread::class.java)
-                        .setParameterList("list", actualThreadIds)
-                        .executeUpdate()
-                session.createQuery("from KThread", KThread::class.java)
-                        .resultList
-                        .map(KThread::id)
+            val threads = Khan
+                    .getCatalog("vg")
+                    .body()
+            if (threads != null)
+            {
+                val actualThreads = threads
+                        .parallelStream()
+                        .map(Page<KhanThread>::threads)
+                        .flatMap(List<KhanThread>::stream)
+                        .toList()
+                val actualThreadIds = actualThreads.map(KhanThread::postNumber)
+                val threadsItShouldIgnore = HibernateUtil.executeTransaction({ session ->
+                    session
+                            .createQuery("delete from KThread where id not in :list")
+                            .setParameterList("list", actualThreadIds)
+                            .executeUpdate()
+                    session.createQuery("from KThread", KThread::class.java)
+                            .resultList
+                            .map(KThread::id)
+                })
+                actualThreads
+                        .parallelStream()
+                        .filter { !threadsItShouldIgnore.contains(it.postNumber) }
+                        .filter { it.subject.contains("hsg", true) || it.comment.contains("playhearthstone", true) }
+                        .filter { it.replyCount >= postNotificationCount }
+                        .map(this@StalkingController::threadToMessage)
+                        .forEach { it.send(officeChannel) }
             }
-            actualThreads
-                    .parallelStream()
-                    .filter { !threadsItShouldIgnore.contains(it.postNumber) }
-                    .filter { it.subject.contains("hsg", true) || it.comment.contains("playhearthstone", true) }
-                    .filter { it.replyCount >= postNotificationCount }
-                    .map(this@StalkingController::threadToMessage)
-                    .forEach { it.send(officeChannel) }
+            delay(threadStalkRate)
+
         }
-        delay(threadStalkRate)
+        catch (err: Exception)
+        {
+            err.printStackTrace()
+        }
         stalkThreads()
     }
 
