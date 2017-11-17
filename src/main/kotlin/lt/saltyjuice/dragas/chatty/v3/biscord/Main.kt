@@ -2,7 +2,7 @@ package lt.saltyjuice.dragas.chatty.v3.biscord
 import kotlinx.coroutines.experimental.runBlocking
 import lt.saltyjuice.dragas.chatty.v3.biscord.controller.CardController
 import lt.saltyjuice.dragas.chatty.v3.biscord.controller.DeckController
-import lt.saltyjuice.dragas.chatty.v3.biscord.controller.HSCardController
+import lt.saltyjuice.dragas.chatty.v3.biscord.controller.KommanderController
 import lt.saltyjuice.dragas.chatty.v3.biscord.controller.StalkingController
 import lt.saltyjuice.dragas.chatty.v3.discord.api.interceptor.RateLimitInterceptor
 import lt.saltyjuice.dragas.chatty.v3.discord.controller.DiscordConnectionController
@@ -25,7 +25,8 @@ fun main(args: Array<String>) = runBlocking<Unit>
             DiscordConnectionController::class.java,
             DeckController::class.java,
             StalkingController::class.java,
-            HSCardController::class.java).apply { work() }
+            KommanderController::class.java
+    ).apply { work() }
 }
 
 inline fun Boolean.doIf(predicate: () -> Unit): Boolean
