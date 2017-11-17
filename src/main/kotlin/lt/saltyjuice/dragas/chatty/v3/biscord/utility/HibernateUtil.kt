@@ -26,7 +26,8 @@ object HibernateUtil
     fun <T> executeTransaction(transaction: ((Session) -> T), afterTransaction: ((Session, result: T) -> Unit)? = null): T
     {
         val session = sessionFactory.openSession()
-        session.transaction.begin()
+        val tx = session.transaction
+        tx.begin()
         try
         {
             val result = transaction(session)
@@ -35,12 +36,13 @@ object HibernateUtil
         }
         catch (err: Exception)
         {
-            session.transaction.rollback()
+            tx.rollback()
             throw err
         }
         finally
         {
-            session.transaction.commit()
+            if (tx.isActive)
+                tx.commit()
             session.close()
         }
     }
