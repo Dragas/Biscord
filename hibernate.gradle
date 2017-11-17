@@ -1,5 +1,7 @@
 String env = System.getenv("DATABASE_URL").replaceFirst("user", "Mantas")
 String dbURL = env.replaceFirst("postgres:", "postgresql:").replaceFirst("/\\w+:?\\w*@", "/")
+if(!dbURL.startsWith("jdbc:"))
+    dbURL = "jdbc:" + dbURL
 URI parsed = new URI(env.replaceFirst("jdbc:", ""))
 List<String> userInfo = parsed.userInfo.split(":").toList()
 
