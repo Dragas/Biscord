@@ -8,11 +8,18 @@ import lt.saltyjuice.dragas.chatty.v3.discord.api.interceptor.RateLimitIntercept
 import lt.saltyjuice.dragas.chatty.v3.discord.controller.DiscordConnectionController
 import lt.saltyjuice.dragas.chatty.v3.discord.main.DiscordClient
 import lt.saltyjuice.dragas.chatty.v3.discord.message.general.Message
+import lt.saltyjuice.dragas.utility.khan4.Client
+import lt.saltyjuice.dragas.utility.khan4.Khan
+import okhttp3.logging.HttpLoggingInterceptor
 
 
 fun main(args: Array<String>) = runBlocking<Unit>
 {
     RateLimitInterceptor.shouldWait = true
+    val client = Client().apply {
+        okHttpBuilder.interceptors().removeIf { it is HttpLoggingInterceptor }
+    }
+    Khan.setClient(client)
     CardController.initialize()
     DiscordClient(
             DiscordConnectionController::class.java,

@@ -9,7 +9,6 @@ import lt.saltyjuice.dragas.chatty.v3.core.route.When
 import lt.saltyjuice.dragas.chatty.v3.discord.message.event.EventMessageCreate
 import lt.saltyjuice.dragas.chatty.v3.discord.message.general.Message
 import lt.saltyjuice.dragas.utility.kommander.worker.Worker
-import lt.saltyjuice.dragas.utility.kommander.worker.WorkerBuilder
 
 class HSCardController : Controller
 {
@@ -28,7 +27,14 @@ class HSCardController : Controller
     {
         if (!request.content.contains("-chid"))
             request.content = request.content + " -chid ${request.channelId}"
-        worker.execute(request.content)
+        try
+        {
+            worker.execute(request.content)
+        }
+        catch (err: Exception)
+        {
+            err.printStackTrace()
+        }
     }
 
     companion object
@@ -41,9 +47,9 @@ class HSCardController : Controller
 
         init
         {
-            val pair = WorkerBuilder(CardCommand::class.java).build()
-            worker = pair.second
-            name = pair.first
+            val pair = Worker.Builder(CardCommand::class.java).build()
+            worker = pair
+            name = pair.obtainName()
         }
     }
 }
