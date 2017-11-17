@@ -16,7 +16,7 @@ services:
 variables:
     GRADLE_OPTS: "-Dorg.gradle.daemon=false"
     POSTGRES_DB: d3lnmvrhmjvkdp
-    POSTTGRES_USER: hhyvoymxpocpcg
+    POSTGRES_USER: hhyvoymxpocpcg
     POSTGRES_PASSWORD: bd3230fb212540a71b1ec31587bf202a346411e67db28c6c32a0b4b9253c0750
 
 # Make the gradle wrapper executable. This essentially downloads a copy of
