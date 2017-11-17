@@ -1,6 +1,5 @@
 package lt.saltyjuice.dragas.chatty.v3.biscord.controller
 
-import lt.saltyjuice.dragas.chatty.v3.biscord.command.DeckCommand
 import lt.saltyjuice.dragas.chatty.v3.biscord.utility.DeckWorker
 import lt.saltyjuice.dragas.chatty.v3.core.controller.Controller
 import lt.saltyjuice.dragas.chatty.v3.core.route.On
@@ -8,7 +7,6 @@ import lt.saltyjuice.dragas.chatty.v3.core.route.When
 import lt.saltyjuice.dragas.chatty.v3.discord.message.MessageBuilder
 import lt.saltyjuice.dragas.chatty.v3.discord.message.event.EventMessageCreate
 import lt.saltyjuice.dragas.chatty.v3.discord.message.general.Message
-import lt.saltyjuice.dragas.utility.kommander.worker.Worker
 
 open class DeckController : Controller
 {
@@ -20,7 +18,7 @@ open class DeckController : Controller
                 .content
                 .split(Regex("\\s"))
                 .parallelStream()
-                .map { "-c $it -chid ${request.channelId}" }
+                .map { "deckode -c $it -chid ${request.channelId}" }
                 .forEach(this::execute)
         /*.map(::DeckWorker)
         .filter(this::isValidWorker)
@@ -30,14 +28,7 @@ open class DeckController : Controller
 
     open fun execute(it: String)
     {
-        try
-        {
-            worker.execute(it)
-        }
-        catch (err: Exception)
-        {
-            err.printStackTrace()
-        }
+        KommanderController.execute(it)
     }
 
     open fun notByMe(message: Message): Boolean
@@ -64,10 +55,5 @@ open class DeckController : Controller
                     messageBuilder.appendLine("# ${count}x (${card.cost}) ${card.name}")
                 }
         return messageBuilder
-    }
-
-    companion object
-    {
-        private val worker = Worker.Builder(DeckCommand::class.java).build()
     }
 }
