@@ -36,13 +36,15 @@ open class DeckWorker(private val hash: String)
         }
         catch (err: IllegalArgumentException)
         {
-            System.err.println("${err.message} caused by ${err.cause}")
+            System.err.println(err.message)
         }
     }
 
     /**
-     * Returns -1 on invalid byte array
+     * Reads an integer value from provided base64 encoded string. Returns -1 if the string has been
+     * completely decoded, otherwise a valid ID value is returned.
      */
+    @Synchronized
     private fun readInt(): Int
     {
         var length = 0
@@ -89,7 +91,7 @@ open class DeckWorker(private val hash: String)
         return true //heroClass != PlayerClass.Neutral
     }
 
-    private fun launchProducer(): ProducerJob<Int> = produce<Int>(Unconfined)
+    private fun launchProducer(): ProducerJob<Int> = produce(Unconfined)
     {
         while (offset.get() < byteArray.size)
         {
@@ -100,9 +102,7 @@ open class DeckWorker(private val hash: String)
 
     private fun addCard(card: Card)
     {
-        var count = deck[card] ?: 0
-        count++
-        deck[card] = count
+        deck[card] = deck[card]?.plus(1) ?: 1
     }
 
     open fun getAsDeck(): HashMap<Card, Int>
@@ -114,7 +114,7 @@ open class DeckWorker(private val hash: String)
             addCards(list, 2)
             addCardMultiples(list)
             list
-                    .map(CardController.Companion::getCardById)
+                    .map(CardController::getCardById)
                     .filter(Optional<Card>::isPresent)
                     .map(Optional<Card>::get)
                     .forEach(this::addCard)
@@ -134,11 +134,11 @@ open class DeckWorker(private val hash: String)
 
     private fun addCardMultiples(where: MutableCollection<Int>)
     {
-        val count = runBlocking { producerJob.receive() }
+        val count = runBlocking { producerJob.receiveOrNull() ?: -1 }
         repeat(count)
         {
-            val id = runBlocking { producerJob.receive() }
-            val internalCount = runBlocking { producerJob.receive() }
+            val id = runBlocking { producerJob.receiveOrNull() ?: -1 }
+            val internalCount = runBlocking { producerJob.receiveOrNull() ?: -1 }
             repeat(internalCount) { where.add(id) }
         }
     }

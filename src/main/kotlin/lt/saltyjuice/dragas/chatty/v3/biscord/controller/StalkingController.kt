@@ -6,6 +6,9 @@ import kotlinx.coroutines.experimental.delay
 import kotlinx.coroutines.experimental.launch
 import lt.saltyjuice.dragas.chatty.v3.biscord.clearMyMentions
 import lt.saltyjuice.dragas.chatty.v3.biscord.doIf
+import lt.saltyjuice.dragas.chatty.v3.biscord.entity.KThread
+import lt.saltyjuice.dragas.chatty.v3.biscord.getenv
+import lt.saltyjuice.dragas.chatty.v3.biscord.utility.HibernateUtil
 import lt.saltyjuice.dragas.chatty.v3.core.controller.Controller
 import lt.saltyjuice.dragas.chatty.v3.core.route.On
 import lt.saltyjuice.dragas.chatty.v3.core.route.When
@@ -130,7 +133,7 @@ class StalkingController : Controller
         }
         catch (err: Throwable)
         {
-            err.printStackTrace(System.err)
+            err.printStackTrace()
         }
         return null
     }
@@ -163,7 +166,7 @@ class StalkingController : Controller
         }
         catch (err: Throwable)
         {
-            err.printStackTrace(System.err)
+            err.printStackTrace()
         }
         return false
     }
@@ -215,52 +218,60 @@ class StalkingController : Controller
 
     fun stalkThreads(): Job = launch(Unconfined)
     {
-
-        val threads = Khan
-                .getCatalog("vg")
-                .body()
-        if (threads != null)
+        try
         {
-            val actualThreads = threads
-                    .parallelStream()
-                    .map(Page<KhanThread>::threads)
-                    .flatMap(List<KhanThread>::stream)
-                    .toList()
-            actualThreads
-                    .parallelStream()
-                    .map(KhanThread::postNumber)
-                    .toList()
-                    .run(threadsItShouldntNotifyAbout::retainAll)
-            actualThreads
-                    .parallelStream()
-                    .filter { !threadsItShouldntNotifyAbout.contains(it.postNumber) }
-                    .filter { it.subject.contains("hsg", true) || it.comment.contains("playhearthstone", true) }
-                    .filter { it.replyCount > postNotificationCount }
-                    .map(this@StalkingController::threadToMessage)
-                    .forEach { it.send(officeChannel) }
+            val threads = Khan
+                    .getCatalog("vg")
+                    .body()
+            if (threads != null)
+            {
+                val actualThreads = threads
+                        .parallelStream()
+                        .map(Page<KhanThread>::threads)
+                        .flatMap(List<KhanThread>::stream)
+                        .toList()
+                val actualThreadIds = actualThreads.map(KhanThread::postNumber)
+                val threadsItShouldIgnore = HibernateUtil.executeTransaction({ session ->
+                    session
+                            .createQuery("delete from KThread where id not in :list")
+                            .setParameterList("list", actualThreadIds)
+                            .executeUpdate()
+                    session.createQuery("from KThread", KThread::class.java)
+                            .resultList
+                            .map(KThread::id)
+                })
+                actualThreads
+                        .parallelStream()
+                        .filter { !threadsItShouldIgnore.contains(it.postNumber) }
+                        .filter { it.subject.contains("hsg", true) || it.comment.contains("playhearthstone", true) }
+                        .filter { it.replyCount >= postNotificationCount }
+                        .map(this@StalkingController::threadToMessage)
+                        .forEach { it.send(officeChannel) }
+            }
+            delay(threadStalkRate)
+
         }
-        delay(threadStalkRate)
+        catch (err: Exception)
+        {
+            err.printStackTrace()
+        }
         stalkThreads()
     }
 
-    fun threadToMessage(thread: KhanThread): MessageBuilder
+    private fun threadToMessage(thread: KhanThread): MessageBuilder
     {
-        threadsItShouldntNotifyAbout.add(thread.postNumber)
+        saveThread(thread)
         val mb = MessageBuilder()
-                .appendLine("@here")
-                .append("Thread named ${thread.subject} (${thread.postNumber}) is at ${thread.replyCount} post")
+                .appendLine("@everyone")
+                .append("Thread named ${thread.subject} (https://boards.4chan.org/vg/thread/${thread.postNumber}) is at ${thread.replyCount} post")
         if (thread.replyCount != 1)
             mb.appendLine("s")
-        mb
-                .appendLine("You should probably make a new thread.")
-                .appendLine("Oh and notify the guys at https://boards.4chan.org/vg/thread/${thread.postNumber}")
+        mb.appendLine("You should probably make a new thread.")
         return mb
     }
 
     companion object
     {
-        @JvmStatic
-        private val threadsItShouldntNotifyAbout = Collections.synchronizedList(ArrayList<Long>())
         @JvmStatic
         private val second = 1000L
 
@@ -274,25 +285,34 @@ class StalkingController : Controller
         private val day = hour * 24
 
         @JvmStatic
-        private val rawLinkRegex = System.getenv("RAW_LINK_REGEX")
+        private val rawLinkRegex = getenv("RAW_LINK_REGEX", "")
 
         @JvmStatic
         private val linkRegex = Regex(rawLinkRegex)
 
         @JvmStatic
-        private val officeChannel = System.getenv("office_id")
+        private val officeChannel = getenv("office_id", "")
 
         @JvmStatic
-        private val threadStalkRate = System.getenv("stalk_delay").toLong()
+        private val threadStalkRate = getenv("stalk_delay", "1").toLong()
 
         @JvmStatic
-        private val postNotificationCount = System.getenv("stalk_post_count").toInt()
+        private val postNotificationCount = getenv("stalk_post_count", "1").toInt()
 
         @JvmStatic
         private val sdf = SimpleDateFormat("YYYY-MM-dd HH:mm:ss z")
 
         @JvmStatic
         private val epochStart = 1420070400000L
+
+        fun saveThread(thread: KhanThread)
+        {
+            HibernateUtil.executeSimpleTransaction({ session ->
+                val khanThread = KThread(thread)
+                //session.persist(khanThread)
+                session.saveOrUpdate(khanThread)
+            })
+        }
     }
 
     private fun User.getAge(): Long

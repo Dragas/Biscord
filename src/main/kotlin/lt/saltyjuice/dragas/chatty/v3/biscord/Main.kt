@@ -2,7 +2,7 @@ package lt.saltyjuice.dragas.chatty.v3.biscord
 import kotlinx.coroutines.experimental.runBlocking
 import lt.saltyjuice.dragas.chatty.v3.biscord.controller.CardController
 import lt.saltyjuice.dragas.chatty.v3.biscord.controller.DeckController
-import lt.saltyjuice.dragas.chatty.v3.biscord.controller.HSCardController
+import lt.saltyjuice.dragas.chatty.v3.biscord.controller.KommanderController
 import lt.saltyjuice.dragas.chatty.v3.biscord.controller.StalkingController
 import lt.saltyjuice.dragas.chatty.v3.discord.api.interceptor.RateLimitInterceptor
 import lt.saltyjuice.dragas.chatty.v3.discord.controller.DiscordConnectionController
@@ -22,11 +22,11 @@ fun main(args: Array<String>) = runBlocking<Unit>
     Khan.setClient(client)
     CardController.initialize()
     DiscordClient(
-            CardController::class.java,
             DiscordConnectionController::class.java,
             DeckController::class.java,
             StalkingController::class.java,
-            HSCardController::class.java).apply { work() }
+            KommanderController::class.java
+    ).apply { work() }
 }
 
 inline fun Boolean.doIf(predicate: () -> Unit): Boolean
@@ -41,4 +41,10 @@ public fun Message.clearMyMentions()
     val id = DiscordConnectionController.getCurrentUserId()
     this.content = this.content.replace(Regex("<@!?$id>\\s*"), "")
     this.mentionedUsers.removeIf { it.id == id }
+}
+
+
+fun getenv(name: String, default: String): String
+{
+    return System.getenv(name) ?: default
 }
