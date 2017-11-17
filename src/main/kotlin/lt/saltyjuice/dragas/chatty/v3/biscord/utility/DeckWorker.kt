@@ -36,7 +36,7 @@ open class DeckWorker(private val hash: String)
         }
         catch (err: IllegalArgumentException)
         {
-            err.printStackTrace()
+            System.err.println(err.message)
         }
     }
 
