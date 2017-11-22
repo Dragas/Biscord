@@ -236,7 +236,7 @@ open class CardCommand : Command
                 .appendLine("[Set: ${it.cardSet}]")
                 .appendLine(it.text)
                 .endCodeSnippet()
-                .appendLine(it.getStatisticsURL())
+                .appendLine("<${it.getStatisticsURL()}>")
     }
 
     private fun buildImage(it: Card): MessageBuilder
