@@ -58,6 +58,11 @@ open class CardCommand : Command
     @Description("Notes that there shouldn't be character related messages")
     var silent: Boolean = false
 
+    @Modifier("co", "-collectable")
+    @JvmField
+    @Description("Notes that there should only be collectable cards")
+    var shouldBeCollectable = false
+
     var list: Collection<Card> = mutableListOf()
 
 
@@ -106,6 +111,10 @@ open class CardCommand : Command
                 text.append("-i ")
             if (shouldShowArtwork)
                 text.append("-a ")
+            if (shouldBeMany)
+                text.append("-m ")
+            if (shouldBeCollectable)
+                text.append("-co ")
             text.append("-l ${list.size}`")
             respond(text.toString())
         }
@@ -169,6 +178,8 @@ open class CardCommand : Command
                 cards = cards.toTypedArray()[0].entourages
             }
         }
+        if (shouldBeCollectable)
+            cards = cards.parallelStream().filter(Card::collectible).toList()
         return cards
 
     }
