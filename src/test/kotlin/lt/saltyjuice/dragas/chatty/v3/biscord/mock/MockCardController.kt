@@ -2,8 +2,8 @@ package lt.saltyjuice.dragas.chatty.v3.biscord.mock
 
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import lt.saltyjuice.dragas.chatty.v3.biscord.controller.CardController
 import lt.saltyjuice.dragas.chatty.v3.biscord.entity.Card
+import lt.saltyjuice.dragas.chatty.v3.biscord.utility.CardUtility
 import java.io.InputStreamReader
 
 open class MockCardController
@@ -20,7 +20,7 @@ open class MockCardController
             val token = object : TypeToken<Set<Card>>()
             {}.type
             val cards: Set<Card> = gson.fromJson(jsonreader, token)
-            CardController.initialize(cards)
+            CardUtility.initialize(cards)
         }
     }
 }

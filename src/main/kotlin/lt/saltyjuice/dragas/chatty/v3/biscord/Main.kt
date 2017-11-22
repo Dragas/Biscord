@@ -4,6 +4,7 @@ import lt.saltyjuice.dragas.chatty.v3.biscord.controller.CardController
 import lt.saltyjuice.dragas.chatty.v3.biscord.controller.DeckController
 import lt.saltyjuice.dragas.chatty.v3.biscord.controller.KommanderController
 import lt.saltyjuice.dragas.chatty.v3.biscord.controller.StalkingController
+import lt.saltyjuice.dragas.chatty.v3.biscord.utility.CardUtility
 import lt.saltyjuice.dragas.chatty.v3.discord.api.interceptor.RateLimitInterceptor
 import lt.saltyjuice.dragas.chatty.v3.discord.controller.DiscordConnectionController
 import lt.saltyjuice.dragas.chatty.v3.discord.main.DiscordClient
@@ -20,12 +21,13 @@ fun main(args: Array<String>) = runBlocking<Unit>
         okHttpBuilder.interceptors().removeIf { it is HttpLoggingInterceptor }
     }
     Khan.setClient(client)
-    CardController.initialize()
+    CardUtility.initialize()
     DiscordClient(
             DiscordConnectionController::class.java,
             DeckController::class.java,
             StalkingController::class.java,
-            KommanderController::class.java
+            KommanderController::class.java,
+            CardController::class.java
     ).apply { work() }
 }
 

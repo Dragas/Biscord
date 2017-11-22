@@ -1,8 +1,9 @@
 package lt.saltyjuice.dragas.chatty.v3.biscord.command
 
-import lt.saltyjuice.dragas.chatty.v3.biscord.controller.CardController
 import lt.saltyjuice.dragas.chatty.v3.biscord.entity.Card
 import lt.saltyjuice.dragas.chatty.v3.biscord.entity.Type
+import lt.saltyjuice.dragas.chatty.v3.biscord.utility.CardUtility
+import lt.saltyjuice.dragas.chatty.v3.discord.api.Utility
 import lt.saltyjuice.dragas.chatty.v3.discord.message.MessageBuilder
 import lt.saltyjuice.dragas.utility.kommander.annotations.Description
 import lt.saltyjuice.dragas.utility.kommander.annotations.Modifier
@@ -52,6 +53,11 @@ open class CardCommand : Command
     @Description("How many results at most should be returned.")
     var limit: Int = 10
 
+    @Modifier("s", "-silent")
+    @JvmField
+    @Description("Notes that there shouldn't be character related messages")
+    var silent: Boolean = false
+
     var list: Collection<Card> = mutableListOf()
 
 
@@ -64,8 +70,21 @@ open class CardCommand : Command
 
     override fun execute()
     {
-        if (!validate())
-            return
+        respond("Let me get that...")
+        searchForCards()
+    }
+
+    protected open fun respond(message: String)
+    {
+        if (!silent)
+        {
+            if (channelId.isNotBlank())
+                Utility.discordAPI.createMessage(channelId, message).execute()
+        }
+    }
+
+    protected open fun searchForCards()
+    {
         list = getCardList()
         if (list.isEmpty())
             onFailure()
@@ -75,53 +94,68 @@ open class CardCommand : Command
 
     protected open fun onSuccess()
     {
+        if (list.size > limit)
+        {
+            val text = StringBuilder()
+            text.append("I have found ${list.size} cards. To list them all, use `hscard $cardName ")
+            if (shouldFindById)
+                text.append("-id ")
+            if (shouldIncludeCreated)
+                text.append("-c ")
+            if (shouldBeImage && !shouldShowArtwork)
+                text.append("-i ")
+            if (shouldShowArtwork)
+                text.append("-a ")
+            text.append("-l ${list.size}`")
+            respond(text.toString())
+        }
         list
                 .parallelStream()
                 .limit(limit.toLong())
                 .map(this::buildMessage)
-                .forEach { if (channelId.isNotBlank()) it.send(channelId) }
+                .forEach { it.send(channelId) }
     }
 
     protected open fun onFailure()
     {
-        val sb = StringBuilder()
-        sb.append("Unable to find any cards ")
+        val sb = StringBuilder().append("I am unable to find any cards ")
+        sb.append("that are ")
+        if (shouldIncludeCreated)
+            sb.append("created by ")
         if (shouldFindById)
-            sb.append("with id ")
-        else
-            sb.append("that are like ")
-        sb.append(cardName)
-        onError(sb.toString())
+            sb.append("id ")
+        sb
+                .append("`")
+                .append(cardName)
+                .append("`")
+        respond(sb.toString())
     }
 
     override fun validate(): Boolean
     {
         if (channelId.isBlank())
+        {
             return false
+        }
         if (cardName.isBlank())
         {
-            onError("Card names need to be prepended with `-n `")
+            respond("Card name is required.")
             return false
         }
         return true
     }
 
-    protected open fun onError(message: String)
-    {
-        if (channelId.isNotBlank()) MessageBuilder().append(message).send(channelId)
-    }
-
     fun getCardList(): Collection<Card>
     {
         val initialFilter = if (shouldBeMany) this::filterForMany else this::filterForSingle
-        val initialList = if (shouldIncludeCreated) CardController.getCards() else CardController.getCollectable()
+        val initialList = CardUtility.getCards()
         var cards = getCards(initialList, initialFilter)
         if (shouldFindById)
         {
             try
             {
                 val id = cardName.toInt()
-                cards = getCards(CardController.getCards(), { it.dbfId == id })
+                cards = getCards(CardUtility.getCards(), { it.dbfId == id })
             }
             catch (err: NumberFormatException)
             {
@@ -130,14 +164,6 @@ open class CardCommand : Command
         }
         else
         {
-            if (cards.isEmpty() && !shouldBeMany)
-            {
-                cards = getCards(initialList, this::filterForMany)
-            }
-            if (cards.isEmpty() && !shouldIncludeCreated)
-            {
-                cards = getCards(CardController.getCards(), this::filterForMany)
-            }
             if (cards.size == 1 && shouldIncludeCreated && !shouldFindById)
             {
                 cards = cards.toTypedArray()[0].entourages
@@ -176,6 +202,7 @@ open class CardCommand : Command
         return MessageBuilder()
                 .appendLine(it.artwork)
     }
+
     private fun buildTextMessage(it: Card): MessageBuilder
     {
         return MessageBuilder()
@@ -188,7 +215,7 @@ open class CardCommand : Command
                     {
                         Type.MINION -> append("${it.attack}/${it.health} ")
                         Type.WEAPON -> append("${it.attack}/${it.durability}")
-                        Type.HERO -> append("${it.armor} Armor")
+                        Type.HERO -> if (it.armor > 0) append("${it.armor} Armor")
                         Type.SPELL ->
                         {
                         }
