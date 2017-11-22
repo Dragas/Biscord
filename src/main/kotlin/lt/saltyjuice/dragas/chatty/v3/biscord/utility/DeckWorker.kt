@@ -4,7 +4,6 @@ import kotlinx.coroutines.experimental.Unconfined
 import kotlinx.coroutines.experimental.channels.ProducerJob
 import kotlinx.coroutines.experimental.channels.produce
 import kotlinx.coroutines.experimental.runBlocking
-import lt.saltyjuice.dragas.chatty.v3.biscord.controller.CardController
 import lt.saltyjuice.dragas.chatty.v3.biscord.entity.Card
 import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
@@ -87,7 +86,7 @@ open class DeckWorker(private val hash: String)
     private fun readHero(): Boolean
     {
         val playerClassInt = readInt()
-        heroClass = CardController.getCardById(playerClassInt)
+        heroClass = CardUtility.getCardById(playerClassInt)
         return true //heroClass != PlayerClass.Neutral
     }
 
@@ -114,7 +113,7 @@ open class DeckWorker(private val hash: String)
             addCards(list, 2)
             addCardMultiples(list)
             list
-                    .map(CardController::getCardById)
+                    .map(CardUtility::getCardById)
                     .filter(Optional<Card>::isPresent)
                     .map(Optional<Card>::get)
                     .forEach(this::addCard)
