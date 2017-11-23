@@ -120,10 +120,21 @@ open class Card : Comparable<Card>
     @SerializedName("durability")
     open var durability: Int = 0
 
-
     fun getStatisticsURL(): String
     {
         return "https://hsreplay.net/cards/$dbfId"
+    }
+
+    fun getCraftingCost(): Pair<Int, Int>
+    {
+        return when (rarity)
+        {
+            "COMMON" -> Pair(40, 400)
+            "RARE" -> Pair(100, 800)
+            "EPIC" -> Pair(400, 1600)
+            "LEGENDARY" -> Pair(1600, 3200)
+            else -> Pair(0, 0)
+        }
     }
 
     /**

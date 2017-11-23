@@ -17,16 +17,11 @@ open class DeckController : Controller
                 .split(Regex("\\s"))
                 .parallelStream()
                 .map { "deckode $it -chid ${request.channelId}" }
-                .forEach(this::execute)
+                .forEach(KommanderController.Companion::execute)
         /*.map(::DeckWorker)
         .filter(this::isValidWorker)
         .map(this::toMessageBuilder)
         .forEach { it.send(request.channelId) }*/
-    }
-
-    open fun execute(it: String)
-    {
-        KommanderController.execute(it)
     }
 
     open fun notByMe(message: Message): Boolean

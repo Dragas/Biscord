@@ -52,16 +52,30 @@ class DeckCommand : Command
                     }
                 }
                 .toSortedMap()
-
-                .forEach { cost, cards ->
+                .forEach()
+                { cost, cards ->
                     val costValue = if (cost == 7) "7+" else "$cost"
                     val count = cards.sumBy(Pair<Card, Int>::second)
                     messageBuilder.field("$costValue cost", "<:blu_square:380807906888646656>".repeat(count).plus("($count)"))
+                }
+        val costs = deck
+                .map()
+                {
+                    val costs = it.key.getCraftingCost()
+                    val regularCost = costs.first * it.value
+                    val goldenCost = costs.second * it.value
+                    Pair(regularCost, goldenCost)
+                }
+                .fold(Pair(0, 0))
+                { acc, pair ->
+                    acc + pair
                 }
         messageBuilder
                 .title("${dw.getClass().get().playerClass} deck")
                 .description("Mode: ${dw.getFormat()}")
                 .thumbnail(dw.getClass().get().artwork)
+                .field("Regular cost", costs.first.toString())
+                .field("Golden cost", costs.second.toString(), true)
         messageBuilder.send(chid, object : Callback<Message>
         {
             override fun onFailure(call: Call<Message>?, t: Throwable?)
@@ -84,4 +98,11 @@ class DeckCommand : Command
         })
 
     }
+}
+
+operator fun Pair<Int, Int>.plus(another: Pair<Int, Int>): Pair<Int, Int>
+{
+    val first = this.first + another.first
+    val second = this.second + another.second
+    return Pair(first, second)
 }
