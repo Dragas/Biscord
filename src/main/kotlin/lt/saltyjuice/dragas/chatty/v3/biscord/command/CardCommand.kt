@@ -19,7 +19,7 @@ open class CardCommand : Command
     @Modifier("c", "-creates")
     @JvmField
     @Description("Whether or not should the returned list consist of only created cards.")
-    var shouldIncludeCreated: Boolean = false
+    var shouldBeCreatedBy: Boolean = false
 
     @Modifier("i", "-image")
     @JvmField
@@ -70,7 +70,8 @@ open class CardCommand : Command
     @Description("Card name or card ID to look for (required)")
     fun cardName(cardName: String)
     {
-        this.cardName = exceptionMap.getOrDefault(cardName, cardName)
+        if (this.cardName.isBlank())
+            this.cardName = exceptionMap.getOrDefault(cardName, cardName).toLowerCase()
     }
 
     override fun execute()
@@ -105,7 +106,7 @@ open class CardCommand : Command
             text.append("I have found ${list.size} cards. To list them all, use `hscard $cardName ")
             if (shouldFindById)
                 text.append("-id ")
-            if (shouldIncludeCreated)
+            if (shouldBeCreatedBy)
                 text.append("-c ")
             if (shouldBeImage && !shouldShowArtwork)
                 text.append("-i ")
@@ -129,10 +130,12 @@ open class CardCommand : Command
     {
         val sb = StringBuilder().append("I am unable to find any cards ")
         sb.append("that are ")
-        if (shouldIncludeCreated)
+        if (shouldBeCreatedBy)
             sb.append("created by ")
         if (shouldFindById)
             sb.append("id ")
+        if (!shouldFindById && !shouldBeCreatedBy)
+            sb.append("like ")
         sb
                 .append("`")
                 .append(cardName)
@@ -173,12 +176,12 @@ open class CardCommand : Command
         }
         else
         {
-            if (cards.size == 1 && shouldIncludeCreated && !shouldFindById)
+            if (cards.size == 1 && shouldBeCreatedBy && !shouldFindById)
             {
                 cards = cards.toTypedArray()[0].entourages
             }
         }
-        if (shouldBeCollectable)
+        if (shouldBeCollectable && !shouldBeCreatedBy)
             cards = cards.parallelStream().filter(Card::collectible).toList()
         return cards
 
@@ -186,7 +189,7 @@ open class CardCommand : Command
 
     private fun filterForSingle(it: Card): Boolean
     {
-        return it.name.toLowerCase() == cardName.toLowerCase()
+        return it.name.toLowerCase().replace(wordsAndSpace, "") == cardName.toLowerCase()
     }
 
     private fun getCards(listToFilter: Collection<Card>, filter: ((Card) -> Boolean)): Collection<Card>
@@ -199,7 +202,7 @@ open class CardCommand : Command
 
     private fun filterForMany(it: Card): Boolean
     {
-        return it.name.toLowerCase().replace(Regex("[^\\w\\s]"), "").contains(cardName)
+        return it.name.toLowerCase().replace(wordsAndSpace, "").contains(cardName)
     }
 
 
@@ -248,6 +251,9 @@ open class CardCommand : Command
 
     companion object
     {
+        @JvmStatic
+        private val wordsAndSpace = Regex("[^\\w\\s]")
+
         @JvmStatic
         private val exceptionMap: HashMap<String, String> = hashMapOf(
                 Pair("Pot of Greed", "Arcane Intellect"),
