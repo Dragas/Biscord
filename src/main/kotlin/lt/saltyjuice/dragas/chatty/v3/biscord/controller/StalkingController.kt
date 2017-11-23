@@ -14,7 +14,8 @@ import lt.saltyjuice.dragas.chatty.v3.core.route.On
 import lt.saltyjuice.dragas.chatty.v3.core.route.When
 import lt.saltyjuice.dragas.chatty.v3.discord.api.Utility
 import lt.saltyjuice.dragas.chatty.v3.discord.controller.DiscordConnectionController
-import lt.saltyjuice.dragas.chatty.v3.discord.message.MessageBuilder
+import lt.saltyjuice.dragas.chatty.v3.discord.message.builder.MessageBuilder
+import lt.saltyjuice.dragas.chatty.v3.discord.message.builder.PrivateChannelBuilder
 import lt.saltyjuice.dragas.chatty.v3.discord.message.event.EventGuildMemberAdd
 import lt.saltyjuice.dragas.chatty.v3.discord.message.event.EventMessageCreate
 import lt.saltyjuice.dragas.chatty.v3.discord.message.event.EventMessageUpdate
@@ -22,7 +23,7 @@ import lt.saltyjuice.dragas.chatty.v3.discord.message.general.ChangedMember
 import lt.saltyjuice.dragas.chatty.v3.discord.message.general.Channel
 import lt.saltyjuice.dragas.chatty.v3.discord.message.general.Message
 import lt.saltyjuice.dragas.chatty.v3.discord.message.general.User
-import lt.saltyjuice.dragas.chatty.v3.discord.message.response.ChannelBuilder
+
 import lt.saltyjuice.dragas.utility.khan4.Khan
 import lt.saltyjuice.dragas.utility.khan4.entity.Page
 import java.text.SimpleDateFormat
@@ -111,16 +112,16 @@ class StalkingController : Controller
         val channel = initiateChannel(user)
         if (channel == null)
         {
-            MessageBuilder()
+            MessageBuilder(officeChannel)
                     .appendLine("Failed to notify user ${user.username}#${user.discriminator}. They probably have me blocked!")
-                    .send(officeChannel)
+                    .sendAsync()
         }
         else
         {
-            MessageBuilder()
+            MessageBuilder(channel.id)
                     .appendLine("I'm sorry, but you need to have a region to post links. Don't worry.")
                     .appendLine("The team were already notified of your presence.")
-                    .send(channel.id)
+                    .sendAsync()
         }
     }
 
@@ -128,7 +129,7 @@ class StalkingController : Controller
     {
         try
         {
-            val response = Utility.discordAPI.createChannel(ChannelBuilder(author.id)).execute()
+            val response = Utility.discordAPI.createChannel(PrivateChannelBuilder(author.id)).execute()
             return response.body()
         }
         catch (err: Throwable)
@@ -143,7 +144,7 @@ class StalkingController : Controller
     {
 
         val dateAsString = sdf.format(message.timestamp)
-        MessageBuilder()
+        MessageBuilder(officeChannel)
                 .appendLine("@everyone : ATTENTION! Possible spammer detected!")
                 .appendLine("User (id): ${message.author.username}#${message.author.discriminator} (${message.author.id})")
                 .appendLine("MessageID: ${message.id}")
@@ -154,7 +155,7 @@ class StalkingController : Controller
                 .append("I was ")
                 .apply { if (!deleteMessage(message.channelId, message.id)) append("not ") }
                 .appendLine("able to delete the message.")
-                .send(officeChannel)
+                .sendAsync()
     }
 
     fun deleteMessage(channelId: String, messageId: String): Boolean
@@ -177,7 +178,7 @@ class StalkingController : Controller
         val ageVerbose = getVerboseAge(age)
         val date = Date()
         date.time -= age
-        MessageBuilder()
+        MessageBuilder(officeChannel)
                 .appendLine("${it.username}#${it.discriminator}")
                 .appendLine("Email: ${it.email}")
                 .appendLine("Account age: $age ms (that's $ageVerbose)")
@@ -188,7 +189,7 @@ class StalkingController : Controller
                 .append("This user does ")
                 .apply { if (!it.isTwoFactorAuthentificationEnabled) append("not ") }
                 .appendLine("have two factor authentification enabled.")
-                .send(officeChannel)
+                .sendAsync()
     }
 
     fun getVerboseAge(number: Long): String
@@ -246,7 +247,7 @@ class StalkingController : Controller
                         .filter { it.subject.contains("hsg", true) || it.comment.contains("playhearthstone", true) }
                         .filter { it.replyCount >= postNotificationCount }
                         .map(this@StalkingController::threadToMessage)
-                        .forEach { it.send(officeChannel) }
+                        .forEach { it.sendAsync() }
             }
             delay(threadStalkRate)
 
@@ -261,7 +262,7 @@ class StalkingController : Controller
     private fun threadToMessage(thread: KhanThread): MessageBuilder
     {
         saveThread(thread)
-        val mb = MessageBuilder()
+        val mb = MessageBuilder(officeChannel)
                 .appendLine("@everyone")
                 .append("Thread named ${thread.subject} (https://boards.4chan.org/vg/thread/${thread.postNumber}) is at ${thread.replyCount} post")
         if (thread.replyCount != 1)

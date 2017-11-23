@@ -7,7 +7,7 @@ import lt.saltyjuice.dragas.chatty.v3.biscord.doIf
 import lt.saltyjuice.dragas.chatty.v3.core.controller.Controller
 import lt.saltyjuice.dragas.chatty.v3.core.route.On
 import lt.saltyjuice.dragas.chatty.v3.core.route.When
-import lt.saltyjuice.dragas.chatty.v3.discord.message.MessageBuilder
+import lt.saltyjuice.dragas.chatty.v3.discord.message.builder.MessageBuilder
 import lt.saltyjuice.dragas.chatty.v3.discord.message.event.EventMessageCreate
 import lt.saltyjuice.dragas.chatty.v3.discord.message.general.Message
 import lt.saltyjuice.dragas.utility.kommander.main.Kommander
@@ -26,7 +26,7 @@ class KommanderController : Controller
     {
         if (message.content.toLowerCase().equals("help") || message.content.isBlank())
         {
-            MessageBuilder().beginCodeSnippet("").append(kommander.description).endCodeSnippet().send(message.channelId)
+            MessageBuilder(message.channelId).beginCodeSnippet("").append(kommander.description).endCodeSnippet().sendAsync()
             return
         }
         execute(message.content + " -chid ${message.channelId}")

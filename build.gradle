@@ -31,7 +31,7 @@ repositories {
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
-    compile "lt.saltyjuice.dragas:chatty-discord:0.4.3-SNAPSHOT"
+    compile "lt.saltyjuice.dragas:chatty-discord:0.5.1-SNAPSHOT"
     compile 'org.postgresql:postgresql:42.1.4'
     compile 'org.hibernate:hibernate-core:5.2.12.Final'
     // https://mvnrepository.com/artifact/org.jsoup/jsoup
