@@ -103,7 +103,7 @@ open class Card : Comparable<Card>
     open var img: String = ""
         get()
         {
-            return "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/$cardId.png"
+            return "https://art.hearthstonejson.com/v1/render/latest/enUS/512x/$cardId.png"
         }
     val artwork: String
         get()
