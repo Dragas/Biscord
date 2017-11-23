@@ -4,7 +4,7 @@ import lt.saltyjuice.dragas.chatty.v3.biscord.entity.Card
 import lt.saltyjuice.dragas.chatty.v3.biscord.entity.Type
 import lt.saltyjuice.dragas.chatty.v3.biscord.utility.CardUtility
 import lt.saltyjuice.dragas.chatty.v3.discord.api.Utility
-import lt.saltyjuice.dragas.chatty.v3.discord.message.MessageBuilder
+import lt.saltyjuice.dragas.chatty.v3.discord.message.builder.MessageBuilder
 import lt.saltyjuice.dragas.utility.kommander.annotations.Description
 import lt.saltyjuice.dragas.utility.kommander.annotations.Modifier
 import lt.saltyjuice.dragas.utility.kommander.annotations.Name
@@ -123,7 +123,7 @@ open class CardCommand : Command
                 .parallelStream()
                 .limit(limit.toLong())
                 .map(this::buildMessage)
-                .forEach { it.send(channelId) }
+                .forEach(MessageBuilder::sendAsync)
     }
 
     protected open fun onFailure()
@@ -213,13 +213,13 @@ open class CardCommand : Command
 
     private fun buildArtwork(it: Card): MessageBuilder
     {
-        return MessageBuilder()
+        return MessageBuilder(channelId)
                 .appendLine(it.artwork)
     }
 
     private fun buildTextMessage(it: Card): MessageBuilder
     {
-        return MessageBuilder()
+        return MessageBuilder(channelId)
                 .beginCodeSnippet("markdown")
                 .appendLine("[${it.name}][${it.cardId}][${it.dbfId}]")
                 .append("[${it.cost} Mana, ${it.playerClass} ${it.rarity} ")
@@ -245,7 +245,7 @@ open class CardCommand : Command
     private fun buildImage(it: Card): MessageBuilder
     {
         val img = /*if (shouldBeGold) it.imgGold else*/ it.img
-        return MessageBuilder()
+        return MessageBuilder(channelId)
                 .appendLine(img)
     }
 

@@ -5,7 +5,6 @@ import lt.saltyjuice.dragas.chatty.v3.biscord.controller.DeckController
 import lt.saltyjuice.dragas.chatty.v3.biscord.controller.KommanderController
 import lt.saltyjuice.dragas.chatty.v3.biscord.controller.StalkingController
 import lt.saltyjuice.dragas.chatty.v3.biscord.utility.CardUtility
-import lt.saltyjuice.dragas.chatty.v3.discord.api.interceptor.RateLimitInterceptor
 import lt.saltyjuice.dragas.chatty.v3.discord.controller.DiscordConnectionController
 import lt.saltyjuice.dragas.chatty.v3.discord.main.DiscordClient
 import lt.saltyjuice.dragas.chatty.v3.discord.message.general.Message
@@ -16,7 +15,6 @@ import okhttp3.logging.HttpLoggingInterceptor
 
 fun main(args: Array<String>) = runBlocking<Unit>
 {
-    RateLimitInterceptor.shouldWait = true
     val client = Client().apply {
         okHttpBuilder.interceptors().removeIf { it is HttpLoggingInterceptor }
     }

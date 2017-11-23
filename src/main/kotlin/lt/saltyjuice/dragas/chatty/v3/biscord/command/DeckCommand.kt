@@ -2,7 +2,7 @@ package lt.saltyjuice.dragas.chatty.v3.biscord.command
 
 import lt.saltyjuice.dragas.chatty.v3.biscord.entity.Card
 import lt.saltyjuice.dragas.chatty.v3.biscord.utility.DeckWorker
-import lt.saltyjuice.dragas.chatty.v3.discord.message.MessageBuilder
+import lt.saltyjuice.dragas.chatty.v3.discord.message.builder.MessageBuilder
 import lt.saltyjuice.dragas.chatty.v3.discord.message.general.Message
 import lt.saltyjuice.dragas.utility.kommander.annotations.Description
 import lt.saltyjuice.dragas.utility.kommander.annotations.Modifier
@@ -39,7 +39,7 @@ class DeckCommand : Command
     override fun execute()
     {
         val deck = dw.getAsDeck()
-        var messageBuilder = MessageBuilder()
+        var messageBuilder = MessageBuilder(chid)
         deck
                 .toList()
                 .groupBy { Math.min(it.first.cost, 7) }
@@ -74,9 +74,9 @@ class DeckCommand : Command
                 .title("${dw.getClass().get().playerClass} deck")
                 .description("Mode: ${dw.getFormat()}")
                 .thumbnail(dw.getClass().get().artwork)
-                .field("Regular cost", costs.first.toString())
+                .field("Regular cost", costs.first.toString(), true)
                 .field("Golden cost", costs.second.toString(), true)
-        messageBuilder.send(chid, object : Callback<Message>
+        messageBuilder.sendAsync(object : Callback<Message>
         {
             override fun onFailure(call: Call<Message>?, t: Throwable?)
             {
@@ -85,7 +85,7 @@ class DeckCommand : Command
 
             override fun onResponse(call: Call<Message>?, response: Response<Message>?)
             {
-                messageBuilder = MessageBuilder()
+                messageBuilder = MessageBuilder(chid)
                 deck.toList()
                         .sortedBy { it.second }
                         .sortedBy { it.first.name }
@@ -93,7 +93,7 @@ class DeckCommand : Command
                         .forEach { (card, count) ->
                             messageBuilder.appendLine("# ${count}x (${card.cost}) ${card.name}")
                         }
-                messageBuilder.send(chid)
+                messageBuilder.sendAsync()
             }
         })
 
