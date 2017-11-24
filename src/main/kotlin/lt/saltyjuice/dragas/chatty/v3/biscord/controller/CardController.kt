@@ -9,8 +9,6 @@ import lt.saltyjuice.dragas.chatty.v3.discord.message.general.Message
 
 class CardController : Controller
 {
-
-
     fun notByMe(request: Message): Boolean
     {
         return !request.author.isBot && request.content.contains(regex)

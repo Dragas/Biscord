@@ -15,7 +15,7 @@ import retrofit2.Response
 
 @Name("deckode")
 @Description("Decodes deck codes into more human readable forms")
-class DeckCommand : Command
+class DeckCommand : DiscordCommand()
 {
     private lateinit var dw: DeckWorker
 
@@ -23,11 +23,6 @@ class DeckCommand : Command
     @JvmField
     @Description("Deck code encoded in base64 as seen on various sources")
     var kode: String = ""
-
-    @Modifier("chid")
-    @JvmField
-    @Description("Redundant. Jeeves overrides this parameter anyways.")
-    var chid: String = ""
 
     override fun validate(): Boolean
     {

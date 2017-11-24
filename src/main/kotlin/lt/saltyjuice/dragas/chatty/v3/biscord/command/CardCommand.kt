@@ -14,7 +14,7 @@ import kotlin.streams.toList
 
 @Name("hscard")
 @Description("Returns any hearthstone card you would ever want")
-open class CardCommand : Command
+open class CardCommand : DiscordCommand()
 {
     @Modifier("c", "-creates")
     @JvmField
@@ -37,11 +37,6 @@ open class CardCommand : Command
     var shouldFindById: Boolean = false
 
     private var cardName: String = ""
-
-    @Modifier("chid")
-    @JvmField
-    @Description("Redundant. Jeeves overrides this anyways.")
-    var channelId: String = ""
 
     @Modifier("a", "-artwork")
     @JvmField
@@ -84,8 +79,8 @@ open class CardCommand : Command
     {
         if (!silent)
         {
-            if (channelId.isNotBlank())
-                Utility.discordAPI.createMessage(channelId, message).execute()
+            if (chid.isNotBlank())
+                Utility.discordAPI.createMessage(chid, message).execute()
         }
     }
 
@@ -145,7 +140,7 @@ open class CardCommand : Command
 
     override fun validate(): Boolean
     {
-        if (channelId.isBlank())
+        if (chid.isBlank())
         {
             return false
         }
@@ -213,13 +208,13 @@ open class CardCommand : Command
 
     private fun buildArtwork(it: Card): MessageBuilder
     {
-        return MessageBuilder(channelId)
+        return MessageBuilder(chid)
                 .appendLine(it.artwork)
     }
 
     private fun buildTextMessage(it: Card): MessageBuilder
     {
-        return MessageBuilder(channelId)
+        return MessageBuilder(chid)
                 .beginCodeSnippet("markdown")
                 .appendLine("[${it.name}][${it.cardId}][${it.dbfId}]")
                 .append("[${it.cost} Mana, ${it.playerClass} ${it.rarity} ")
@@ -245,7 +240,7 @@ open class CardCommand : Command
     private fun buildImage(it: Card): MessageBuilder
     {
         val img = /*if (shouldBeGold) it.imgGold else*/ it.img
-        return MessageBuilder(channelId)
+        return MessageBuilder(chid)
                 .appendLine(img)
     }
 

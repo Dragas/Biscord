@@ -16,5 +16,6 @@
         <property name="connection.pool_size">1</property>
         <mapping class="lt.saltyjuice.dragas.chatty.v3.biscord.entity.Card"/>
         <mapping class="lt.saltyjuice.dragas.chatty.v3.biscord.entity.KThread"/>
+        <mapping class="lt.saltyjuice.dragas.chatty.v3.biscord.entity.User"/>
     </session-factory>
 </hibernate-configuration>

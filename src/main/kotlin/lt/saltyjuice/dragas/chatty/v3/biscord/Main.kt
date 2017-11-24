@@ -29,9 +29,16 @@ fun main(args: Array<String>) = runBlocking<Unit>
     ).apply { work() }
 }
 
-inline fun Boolean.doIf(predicate: () -> Unit): Boolean
+public fun Boolean.doIf(predicate: () -> Unit): Boolean
 {
     if (this)
+        predicate.invoke()
+    return this
+}
+
+public fun Boolean.doUnless(predicate: () -> Unit) : Boolean
+{
+    if(!this)
         predicate.invoke()
     return this
 }

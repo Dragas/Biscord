@@ -3,6 +3,7 @@ package lt.saltyjuice.dragas.chatty.v3.biscord.controller
 import lt.saltyjuice.dragas.chatty.v3.biscord.clearMyMentions
 import lt.saltyjuice.dragas.chatty.v3.biscord.command.CardCommand
 import lt.saltyjuice.dragas.chatty.v3.biscord.command.DeckCommand
+import lt.saltyjuice.dragas.chatty.v3.biscord.command.PurgeCommand
 import lt.saltyjuice.dragas.chatty.v3.biscord.doIf
 import lt.saltyjuice.dragas.chatty.v3.core.controller.Controller
 import lt.saltyjuice.dragas.chatty.v3.core.route.On
@@ -29,13 +30,13 @@ class KommanderController : Controller
             MessageBuilder(message.channelId).beginCodeSnippet("").append(kommander.description).endCodeSnippet().sendAsync()
             return
         }
-        execute(message.content + " -chid ${message.channelId}")
+        execute(message.content + " -chid ${message.channelId} -user ${message.author.id}")
     }
 
     companion object
     {
         @JvmStatic
-        protected val kommander: Kommander = Kommander(CardCommand::class.java, DeckCommand::class.java).initialize()
+        protected val kommander: Kommander = Kommander(CardCommand::class.java, DeckCommand::class.java, PurgeCommand::class.java).initialize()
 
         @JvmStatic
         fun execute(commandLine: String)
