@@ -43,6 +43,13 @@ public fun Message.clearMyMentions()
     this.mentionedUsers.removeIf { it.id == id }
 }
 
+public operator fun Pair<Int, Int>.plus(another: Pair<Int, Int>): Pair<Int, Int>
+{
+    val first = this.first + another.first
+    val second = this.second + another.second
+    return Pair(first, second)
+}
+
 
 fun getenv(name: String, default: String): String
 {

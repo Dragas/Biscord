@@ -1,6 +1,7 @@
 package lt.saltyjuice.dragas.chatty.v3.biscord.command
 
 import lt.saltyjuice.dragas.chatty.v3.biscord.entity.Card
+import lt.saltyjuice.dragas.chatty.v3.biscord.plus
 import lt.saltyjuice.dragas.chatty.v3.biscord.utility.DeckWorker
 import lt.saltyjuice.dragas.chatty.v3.discord.message.builder.MessageBuilder
 import lt.saltyjuice.dragas.chatty.v3.discord.message.general.Message
@@ -98,11 +99,4 @@ class DeckCommand : Command
         })
 
     }
-}
-
-operator fun Pair<Int, Int>.plus(another: Pair<Int, Int>): Pair<Int, Int>
-{
-    val first = this.first + another.first
-    val second = this.second + another.second
-    return Pair(first, second)
 }
