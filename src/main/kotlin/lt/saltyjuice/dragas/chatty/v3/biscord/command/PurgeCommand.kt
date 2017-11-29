@@ -1,5 +1,7 @@
 package lt.saltyjuice.dragas.chatty.v3.biscord.command
 
+import lt.saltyjuice.dragas.chatty.v3.biscord.command.discord.ProtectedDiscordCommand
+import lt.saltyjuice.dragas.chatty.v3.biscord.utility.CardUtility
 import lt.saltyjuice.dragas.chatty.v3.biscord.utility.HibernateUtil
 import lt.saltyjuice.dragas.chatty.v3.discord.message.builder.MessageBuilder
 import lt.saltyjuice.dragas.utility.kommander.annotations.Description
@@ -24,25 +26,24 @@ class PurgeCommand : ProtectedDiscordCommand()
 
     protected open fun purge()
     {
-        MessageBuilder(chid).append("Purging table $table...").send()
-        val mb = MessageBuilder(chid)
+        respond("Purging table $table...")
         try
         {
             var rowsAffected = 0
-            val result = measureTimeMillis {
+            val result = measureTimeMillis()
+            {
                 HibernateUtil.executeTransaction({ session ->
                     val query = session.createQuery("delete from $table")
                     rowsAffected = query.executeUpdate()
                 })
             }
-            mb.append("Purge complete. Request took $result ms and affected $rowsAffected rows. If this was some sensitive data I should get restarted.")
+            respond("Purge complete. Request took $result ms and affected $rowsAffected rows. If this was some sensitive data I should get restarted.")
         }
         catch (err: Exception)
         {
             err.printStackTrace()
-            mb.append("Purging failed. Reason `$err`. Check logs for more information")
+            respond("Purging failed. Reason `$err`. Check logs for more information")
         }
-        mb.send()
     }
 
     override fun onValidate(permissionGranted: Boolean): Boolean
