@@ -23,7 +23,7 @@ class CardController : Controller
                 .map(MatchResult::value)
                 .map { it.replace("[[", "").replace("]]", "").trim() }
                 .filter(String::isNotBlank)
-                .map { "hscard $it -chid ${request.channelId} -s -co" }
+                .map { "hscard $it -chid ${request.channelId} -s -co -user ${request.author.id}" }
                 .forEach(KommanderController.Companion::execute)
     }
 
