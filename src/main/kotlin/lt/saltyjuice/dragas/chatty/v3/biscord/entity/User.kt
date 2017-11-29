@@ -6,10 +6,11 @@ import javax.persistence.Table
 
 @Entity
 @Table(name = "users")
-open class User
+open class User @JvmOverloads constructor(targetUserId: String = "")
 {
     @Id
-    var id : String = ""
+    var id : String = targetUserId
 
     var permissions : Long = 0
+
 }
