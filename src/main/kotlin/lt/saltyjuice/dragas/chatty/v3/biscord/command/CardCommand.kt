@@ -3,14 +3,7 @@ package lt.saltyjuice.dragas.chatty.v3.biscord.command
 import lt.saltyjuice.dragas.chatty.v3.biscord.entity.Card
 import lt.saltyjuice.dragas.chatty.v3.biscord.entity.Type
 import lt.saltyjuice.dragas.chatty.v3.biscord.utility.CardUtility
-import lt.saltyjuice.dragas.chatty.v3.discord.api.Utility
-import lt.saltyjuice.dragas.chatty.v3.discord.message.builder.MessageBuilder
-import lt.saltyjuice.dragas.utility.kommander.annotations.Description
-import lt.saltyjuice.dragas.utility.kommander.annotations.Modifier
-import lt.saltyjuice.dragas.utility.kommander.annotations.Name
-import lt.saltyjuice.dragas.utility.kommander.main.Command
 import java.util.*
-import kotlin.streams.toList
 
 @Name("hscard")
 @Description("Returns any hearthstone card you would ever want")
@@ -48,11 +41,6 @@ open class CardCommand : DiscordCommand()
     @Description("How many results at most should be returned.")
     var limit: Int = 10
 
-    @Modifier("s", "-silent")
-    @JvmField
-    @Description("Notes that there shouldn't be character related messages")
-    var silent: Boolean = false
-
     @Modifier("co", "-collectable")
     @JvmField
     @Description("Notes that there should only be collectable cards")
@@ -73,15 +61,6 @@ open class CardCommand : DiscordCommand()
     {
         respond("Let me get that...")
         searchForCards()
-    }
-
-    protected open fun respond(message: String)
-    {
-        if (!silent)
-        {
-            if (chid.isNotBlank())
-                Utility.discordAPI.createMessage(chid, message).execute()
-        }
     }
 
     protected open fun searchForCards()
@@ -118,7 +97,12 @@ open class CardCommand : DiscordCommand()
                 .parallelStream()
                 .limit(limit.toLong())
                 .map(this::buildMessage)
-                .forEach(MessageBuilder::sendAsync)
+                .forEach(this::respondAsync)
+    }
+
+    open fun respondAsync(messageBuilder: MessageBuilder)
+    {
+        super.respondAsync(messageBuilder, null)
     }
 
     protected open fun onFailure()
@@ -140,10 +124,6 @@ open class CardCommand : DiscordCommand()
 
     override fun validate(): Boolean
     {
-        if (chid.isBlank())
-        {
-            return false
-        }
         if (cardName.isBlank())
         {
             respond("Card name is required.")
