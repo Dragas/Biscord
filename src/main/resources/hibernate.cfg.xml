@@ -13,7 +13,7 @@
     <session-factory>
         <property name="hibernate.hbm2ddl.auto">update</property>
         <property name="hibernate.dialect">org.hibernate.dialect.PostgreSQL95Dialect</property>
-        <property name="connection.pool_size">1</property>
+        <property name="connection.pool_size">20</property>
         <mapping class="lt.saltyjuice.dragas.chatty.v3.biscord.entity.Card"/>
         <mapping class="lt.saltyjuice.dragas.chatty.v3.biscord.entity.KThread"/>
         <mapping class="lt.saltyjuice.dragas.chatty.v3.biscord.entity.User"/>
