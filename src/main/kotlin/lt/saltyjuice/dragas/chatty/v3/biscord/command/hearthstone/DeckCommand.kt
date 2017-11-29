@@ -27,7 +27,6 @@ class DeckCommand : ProtectedDiscordCommand()
 
     override fun onValidate(): Boolean
     {
-
         dw = DeckWorker(kode)
         return dw.isValid()
     }
