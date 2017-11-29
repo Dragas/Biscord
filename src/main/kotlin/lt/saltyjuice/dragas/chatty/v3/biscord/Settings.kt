@@ -3,10 +3,8 @@ package lt.saltyjuice.dragas.chatty.v3.biscord
 object Settings
 {
     @JvmStatic
-    val MASHAPE_HEADER = "X-Mashape-Key"
-
-    val MASHAPE_KEY_ENV = "MASHAPE_KEY"
+    val OWNER_ID_ENV = "OWNER_ID"
 
     @JvmStatic
-    val MASHAPE_KEY = System.getenv(MASHAPE_KEY_ENV)// ?: throw NullPointerException("$MASHAPE_KEY_ENV environmental variable must be present")
+    val OWNER_ID = System.getenv(OWNER_ID_ENV) ?: throw NullPointerException("Owner ID is required")
 }

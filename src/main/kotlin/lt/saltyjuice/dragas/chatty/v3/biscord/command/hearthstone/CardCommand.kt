@@ -1,21 +1,21 @@
-package lt.saltyjuice.dragas.chatty.v3.biscord.command
+package lt.saltyjuice.dragas.chatty.v3.biscord.command.hearthstone
 
+import lt.saltyjuice.dragas.chatty.v3.biscord.command.discord.ProtectedDiscordCommand
 import lt.saltyjuice.dragas.chatty.v3.biscord.entity.Card
 import lt.saltyjuice.dragas.chatty.v3.biscord.entity.Type
 import lt.saltyjuice.dragas.chatty.v3.biscord.utility.CardUtility
-import lt.saltyjuice.dragas.chatty.v3.discord.api.Utility
 import lt.saltyjuice.dragas.chatty.v3.discord.message.builder.MessageBuilder
 import lt.saltyjuice.dragas.utility.kommander.annotations.Description
 import lt.saltyjuice.dragas.utility.kommander.annotations.Modifier
 import lt.saltyjuice.dragas.utility.kommander.annotations.Name
-import lt.saltyjuice.dragas.utility.kommander.main.Command
 import java.util.*
 import kotlin.streams.toList
 
 @Name("hscard")
 @Description("Returns any hearthstone card you would ever want")
-open class CardCommand : Command
+open class CardCommand : ProtectedDiscordCommand()
 {
+    override val requiredPermissions: Long = 0
     @Modifier("c", "-creates")
     @JvmField
     @Description("Whether or not should the returned list consist of only created cards.")
@@ -23,7 +23,7 @@ open class CardCommand : Command
 
     @Modifier("i", "-image")
     @JvmField
-    @Description("Whether or not should the returned list be of card images (prioritized artwork)")
+    @Description("Whether or not should the returned list be of card images (prioritized over artwork)")
     var shouldBeImage: Boolean = false
 
     @Modifier("m", "-many")
@@ -38,11 +38,6 @@ open class CardCommand : Command
 
     private var cardName: String = ""
 
-    @Modifier("chid")
-    @JvmField
-    @Description("Redundant. Jeeves overrides this anyways.")
-    var channelId: String = ""
-
     @Modifier("a", "-artwork")
     @JvmField
     @Description("Whether or not the result should be an artwork.")
@@ -52,11 +47,6 @@ open class CardCommand : Command
     @JvmField
     @Description("How many results at most should be returned.")
     var limit: Int = 10
-
-    @Modifier("s", "-silent")
-    @JvmField
-    @Description("Notes that there shouldn't be character related messages")
-    var silent: Boolean = false
 
     @Modifier("co", "-collectable")
     @JvmField
@@ -78,15 +68,6 @@ open class CardCommand : Command
     {
         respond("Let me get that...")
         searchForCards()
-    }
-
-    protected open fun respond(message: String)
-    {
-        if (!silent)
-        {
-            if (channelId.isNotBlank())
-                Utility.discordAPI.createMessage(channelId, message).execute()
-        }
     }
 
     protected open fun searchForCards()
@@ -119,11 +100,17 @@ open class CardCommand : Command
             text.append("-l ${list.size}`")
             respond(text.toString())
         }
+        silent = false
         list
                 .parallelStream()
                 .limit(limit.toLong())
                 .map(this::buildMessage)
-                .forEach(MessageBuilder::sendAsync)
+                .forEach(this::respondAsync)
+    }
+
+    open fun respondAsync(messageBuilder: MessageBuilder)
+    {
+        super.respondAsync(messageBuilder, null)
     }
 
     protected open fun onFailure()
@@ -143,18 +130,14 @@ open class CardCommand : Command
         respond(sb.toString())
     }
 
-    override fun validate(): Boolean
+    override fun onValidate(): Boolean
     {
-        if (channelId.isBlank())
-        {
-            return false
-        }
         if (cardName.isBlank())
         {
             respond("Card name is required.")
             return false
         }
-        return true
+        return super.onValidate()
     }
 
     fun getCardList(): Collection<Card>
@@ -189,7 +172,7 @@ open class CardCommand : Command
 
     private fun filterForSingle(it: Card): Boolean
     {
-        return it.name.toLowerCase().replace(wordsAndSpace, "") == cardName.toLowerCase()
+        return it.name.toLowerCase().replace(wordsAndSpace, "") == cardName.replace(wordsAndSpace, "").toLowerCase()
     }
 
     private fun getCards(listToFilter: Collection<Card>, filter: ((Card) -> Boolean)): Collection<Card>
@@ -213,13 +196,13 @@ open class CardCommand : Command
 
     private fun buildArtwork(it: Card): MessageBuilder
     {
-        return MessageBuilder(channelId)
+        return MessageBuilder(chid)
                 .appendLine(it.artwork)
     }
 
     private fun buildTextMessage(it: Card): MessageBuilder
     {
-        return MessageBuilder(channelId)
+        return MessageBuilder(chid)
                 .beginCodeSnippet("markdown")
                 .appendLine("[${it.name}][${it.cardId}][${it.dbfId}]")
                 .append("[${it.cost} Mana, ${it.playerClass} ${it.rarity} ")
@@ -245,7 +228,7 @@ open class CardCommand : Command
     private fun buildImage(it: Card): MessageBuilder
     {
         val img = /*if (shouldBeGold) it.imgGold else*/ it.img
-        return MessageBuilder(channelId)
+        return MessageBuilder(chid)
                 .appendLine(img)
     }
 

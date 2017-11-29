@@ -29,9 +29,16 @@ fun main(args: Array<String>) = runBlocking<Unit>
     ).apply { work() }
 }
 
-inline fun Boolean.doIf(predicate: () -> Unit): Boolean
+public fun Boolean.doIf(predicate: () -> Unit): Boolean
 {
     if (this)
+        predicate.invoke()
+    return this
+}
+
+public fun Boolean.doUnless(predicate: () -> Unit) : Boolean
+{
+    if(!this)
         predicate.invoke()
     return this
 }
@@ -41,6 +48,13 @@ public fun Message.clearMyMentions()
     val id = DiscordConnectionController.getCurrentUserId()
     this.content = this.content.replace(Regex("<@!?$id>\\s*"), "")
     this.mentionedUsers.removeIf { it.id == id }
+}
+
+public operator fun Pair<Int, Int>.plus(another: Pair<Int, Int>): Pair<Int, Int>
+{
+    val first = this.first + another.first
+    val second = this.second + another.second
+    return Pair(first, second)
 }
 
 

@@ -13,8 +13,12 @@
     <session-factory>
         <property name="hibernate.hbm2ddl.auto">update</property>
         <property name="hibernate.dialect">org.hibernate.dialect.PostgreSQL95Dialect</property>
-        <property name="connection.pool_size">1</property>
+        <property name="hibernate.c3p0.min_size">1</property>
+        <property name="hibernate.c3p0.max_size">20</property>
+        <property name="hibernate.c3p0.idle_test_period">15</property>
+        <property name="hibernate.c3p0.timeout">15</property>
         <mapping class="lt.saltyjuice.dragas.chatty.v3.biscord.entity.Card"/>
         <mapping class="lt.saltyjuice.dragas.chatty.v3.biscord.entity.KThread"/>
+        <mapping class="lt.saltyjuice.dragas.chatty.v3.biscord.entity.User"/>
     </session-factory>
 </hibernate-configuration>

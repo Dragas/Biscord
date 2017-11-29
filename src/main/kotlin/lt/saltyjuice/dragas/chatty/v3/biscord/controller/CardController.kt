@@ -9,8 +9,6 @@ import lt.saltyjuice.dragas.chatty.v3.discord.message.general.Message
 
 class CardController : Controller
 {
-
-
     fun notByMe(request: Message): Boolean
     {
         return !request.author.isBot && request.content.contains(regex)
@@ -25,7 +23,7 @@ class CardController : Controller
                 .map(MatchResult::value)
                 .map { it.replace("[[", "").replace("]]", "").trim() }
                 .filter(String::isNotBlank)
-                .map { "hscard $it -chid ${request.channelId} -s -co" }
+                .map { "hscard $it -chid ${request.channelId} -s -co -user ${request.author.id}" }
                 .forEach(KommanderController.Companion::execute)
     }
 

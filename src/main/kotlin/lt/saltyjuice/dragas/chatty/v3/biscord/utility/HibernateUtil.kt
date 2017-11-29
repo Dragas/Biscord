@@ -22,8 +22,7 @@ object HibernateUtil
         sessionFactory = metadata.buildSessionFactory()
     }
 
-    @JvmOverloads
-    fun <T> executeTransaction(transaction: ((Session) -> T), afterTransaction: ((Session, result: T) -> Unit)? = null): T
+    fun <T> executeTransaction(transaction: ((Session) -> T)): T
     {
         val session = sessionFactory.openSession()
         val tx = session.transaction
@@ -31,7 +30,6 @@ object HibernateUtil
         try
         {
             val result = transaction(session)
-            afterTransaction?.invoke(session, result)
             return result
         }
         catch (err: Exception)
@@ -46,27 +44,8 @@ object HibernateUtil
             session.close()
         }
     }
-
-    @JvmStatic
-    fun executeSimpleTransaction(transaction: ((session: Session) -> Unit), afterTransaction: ((Session) -> Unit)? = null)
+    fun executeSimpleTransaction(transaction: ((session: Session) -> Unit))
     {
-        executeTransaction(transaction, { session, _ -> afterTransaction?.invoke(session) })
-    }
-
-    fun <T> executeDetachedTransaction(transaction: ((session: Session) -> T)): T
-    {
-        return executeTransaction(transaction)
-        { session: Session, result: T ->
-            if (result is Iterable<*>)
-                result.forEach { detachFromSession(session, it) }
-            else
-                detachFromSession(session, result)
-        }
-    }
-
-    private fun detachFromSession(session: Session, item: Any?)
-    {
-        item ?: return
-        session.detach(item)
+        executeTransaction(transaction)
     }
 }

@@ -35,11 +35,13 @@ object CardUtility : Callback<Set<Card>>
         }
     }
 
+    @JvmStatic
     fun initializeFromSet(cards: Set<Card>): Boolean
     {
         return cards.isNotEmpty().doIf { consumeCards(cards); }
     }
 
+    @JvmStatic
     fun initializeFromDatabase(): Boolean
     {
         val result = HibernateUtil.executeTransaction(
@@ -48,7 +50,7 @@ object CardUtility : Callback<Set<Card>>
                     val result = query.resultList
                     result.toSet()
                 })
-        return result.isNotEmpty().doIf { consumeCards(result) }
+        return initializeFromSet(result)
     }
 
     @JvmStatic
