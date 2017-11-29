@@ -36,6 +36,10 @@ abstract class ProtectedDiscordCommand : DiscordCommand()
 
     open fun onValidate(permissionGranted: Boolean): Boolean
     {
+        if(chid.isNotBlank())
+        {
+            respondAsync("Access denied.")
+        }
         return permissionGranted
     }
 }
