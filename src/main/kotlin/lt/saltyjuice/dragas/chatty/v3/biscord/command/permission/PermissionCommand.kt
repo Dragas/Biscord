@@ -17,21 +17,28 @@ abstract class PermissionCommand : ProtectedDiscordCommand()
 
     override fun onValidate(permissionGranted: Boolean): Boolean
     {
+        if(!super.onValidate(permissionGranted))
+            return false
         if(permission == 0L)
         {
-            MessageBuilder(chid).append("You don't need to $verb default permissions \uD83E\uDD14").sendAsync()
+            respondAsync("You don't need to $verb default permissions \uD83E\uDD14")
             return false
         }
         targetUserId = targetUserId.replace(Regex("[<>@!]"), "")
         if(targetUserId.isBlank())
         {
-            MessageBuilder(chid).append("Target user modifier is required").sendAsync()
+            respondAsync("Target user modifier is required")
             return false
         }
-        val currentUsersPermissions = getRequestingUser()?.permissions ?: 0
-        if(currentUsersPermissions.and(permission) != permission || Settings.OWNER_ID != userId)
+        if(Settings.OWNER_ID == userId)
         {
-            MessageBuilder(chid).append("Current user can't $verb such permissions").sendAsync()
+            return true
+        }
+        val currentUsersPermissions = getRequestingUser()?.permissions ?: 0
+        if(currentUsersPermissions.and(permission) != permission)
+        {
+            respondAsync("Current user can't $verb such permissions")
+            return false
         }
         return true
     }
