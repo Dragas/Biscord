@@ -11,10 +11,10 @@ import kotlin.system.measureTimeMillis
 
 @Name("purge")
 @Description("Purges internal data when necessary.")
-class PurgeCommand : ProtectedDiscordCommand()
+open class PurgeCommand : ProtectedDiscordCommand()
 {
     @Modifier("t", "table")
-    var table: String = ""
+    open var table: String = ""
 
     override val requiredPermissions: Long = 1L
 
