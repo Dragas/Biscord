@@ -295,10 +295,10 @@ class StalkingController : Controller
         private val officeChannel = getenv("office_id", "")
 
         @JvmStatic
-        private val threadStalkRate = getenv("stalk_delay", "1").toLong()
+        private val threadStalkRate = getenv("stalk_delay", "900000").toLong()
 
         @JvmStatic
-        private val postNotificationCount = getenv("stalk_post_count", "1").toInt()
+        private val postNotificationCount = getenv("stalk_post_count", "720").toInt()
 
         @JvmStatic
         private val sdf = SimpleDateFormat("YYYY-MM-dd HH:mm:ss z")
