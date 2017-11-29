@@ -100,6 +100,7 @@ open class CardCommand : ProtectedDiscordCommand()
             text.append("-l ${list.size}`")
             respond(text.toString())
         }
+        silent = false
         list
                 .parallelStream()
                 .limit(limit.toLong())
