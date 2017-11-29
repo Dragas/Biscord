@@ -29,16 +29,22 @@ class TagCommand : ProtectedDiscordCommand()
 
     override fun execute()
     {
-        val tag = Tag(source, target)
         HibernateUtil.executeSimpleTransaction()
         { session ->
             val query = session.createQuery("from Tag where lower(key) = lower(:key)", Tag::class.java)
             query.setParameter("key", source)
             val results = query.resultList
             if(results.isEmpty() || force)
+            {
+                val tag = results.getOrNull(0) ?: Tag(source, target)
+                tag.value = target
                 session.saveOrUpdate(tag)
+                respond("Done. $source now points to $target")
+            }
             else
-                respond("There's already a tag for `$source`, which leads to `${tag.value}`. If you want to overwrite that use `tag $source -t $target -f`")
+            {
+                respond("There's already a tag for `$source`, which leads to `${results[0].value}`. If you want to overwrite that use `tag $source -t $target -f`")
+            }
         }
     }
 }
