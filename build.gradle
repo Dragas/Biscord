@@ -20,6 +20,7 @@ apply plugin: 'application'
 mainClassName = "lt.saltyjuice.dragas.chatty.v3.biscord.MainKt"
 
 sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 repositories {
     mavenCentral()
