@@ -6,16 +6,16 @@ import lt.saltyjuice.dragas.chatty.v3.biscord.utility.HibernateUtil
 
 abstract class ProtectedDiscordCommand : DiscordCommand()
 {
-    private var validateWasCalled = false
     protected abstract val requiredPermissions: Long
 
     final override fun validate(): Boolean
     {
-        validateWasCalled = true
         if (!super.validate())
             return false
-        var permissionGranted = requiredPermissions == 0L || userId == Settings.OWNER_ID
+        var permissionGranted = userId == Settings.OWNER_ID
         if (!permissionGranted)
+        {
+            var permissions = 0L
             permissionGranted = HibernateUtil.executeTransaction({ session ->
                 if (userId.isNotBlank())
                 {
@@ -25,22 +25,17 @@ abstract class ProtectedDiscordCommand : DiscordCommand()
                     if (result.isNotEmpty())
                     {
                         val user = result[0]
-                        return@executeTransaction user.permissions.and(requiredPermissions) == requiredPermissions
+                        permissions = user.permissions
                     }
                 }
-                return@executeTransaction false
+                return@executeTransaction permissions.and(requiredPermissions) == requiredPermissions
             })
+        }
         return onValidate(permissionGranted)
     }
 
-    final override fun execute()
+    open fun onValidate(permissionGranted: Boolean): Boolean
     {
-        if (!validateWasCalled)
-            throw KommanderException("super.validate() was not called")
-        onExecute()
+        return permissionGranted
     }
-
-    abstract fun onValidate(permissionGranted: Boolean): Boolean
-
-    abstract fun onExecute()
 }
