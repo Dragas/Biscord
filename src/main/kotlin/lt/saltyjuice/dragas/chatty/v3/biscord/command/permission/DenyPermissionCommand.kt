@@ -5,8 +5,12 @@ import lt.saltyjuice.dragas.chatty.v3.biscord.command.permission.PermissionComma
 import lt.saltyjuice.dragas.chatty.v3.biscord.entity.User
 import lt.saltyjuice.dragas.chatty.v3.biscord.utility.HibernateUtil
 import lt.saltyjuice.dragas.chatty.v3.discord.message.builder.MessageBuilder
+import lt.saltyjuice.dragas.utility.kommander.annotations.Description
 import lt.saltyjuice.dragas.utility.kommander.annotations.Modifier
+import lt.saltyjuice.dragas.utility.kommander.annotations.Name
 
+@Name("deny")
+@Description("Used to deny permissions for \"\"\"vital\"\"\" commands")
 class DenyPermissionCommand : PermissionCommand()
 {
     override val requiredPermissions: Long = 2L
