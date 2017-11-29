@@ -84,26 +84,4 @@ abstract class DiscordCommand : Command
     {
         return chid.isNotBlank() && userId.isNotBlank()
     }
-
-    protected fun getRequestingUser() : User?
-    {
-        return getTargetUser(userId)
-    }
-
-    protected fun getTargetUser(userId : String) : User?
-    {
-        return HibernateUtil.executeTransaction({ session ->
-            val query = session.createQuery("from User where id = :userid", User::class.java)
-            query.setParameter("userid", userId)
-            val result = query.resultList
-            if (result.isNotEmpty())
-            {
-                result[0]
-            }
-            else
-            {
-                null
-            }
-        })
-    }
 }

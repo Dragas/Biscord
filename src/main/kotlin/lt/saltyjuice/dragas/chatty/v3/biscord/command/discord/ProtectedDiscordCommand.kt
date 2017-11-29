@@ -1,6 +1,8 @@
 package lt.saltyjuice.dragas.chatty.v3.biscord.command.discord
 
 import lt.saltyjuice.dragas.chatty.v3.biscord.Settings
+import lt.saltyjuice.dragas.chatty.v3.biscord.entity.User
+import lt.saltyjuice.dragas.chatty.v3.biscord.utility.HibernateUtil
 
 abstract class ProtectedDiscordCommand : DiscordCommand()
 {
@@ -17,18 +19,38 @@ abstract class ProtectedDiscordCommand : DiscordCommand()
             val userPermissions = user?.permissions ?: 0
             permissionGranted = userPermissions.and(requiredPermissions) == requiredPermissions
         }
-        return onValidate(permissionGranted)
-    }
-
-    open fun onValidate(permissionGranted: Boolean): Boolean
-    {
         if(!permissionGranted)
         {
-            respondAsync("Access denied.")
+            respond("Permission denied")
             return false
         }
-        return permissionGranted
+        return onValidate()
     }
 
+    open fun onValidate(): Boolean
+    {
+        return true
+    }
+    protected fun getRequestingUser() : User?
+    {
+        return getTargetUser(userId)
+    }
+
+    protected fun getTargetUser(userId : String) : User?
+    {
+        return HibernateUtil.executeTransaction({ session ->
+            val query = session.createQuery("from User where id = :userid", User::class.java)
+            query.setParameter("userid", userId)
+            val result = query.resultList
+            if (result.isNotEmpty())
+            {
+                result[0]
+            }
+            else
+            {
+                null
+            }
+        })
+    }
 
 }

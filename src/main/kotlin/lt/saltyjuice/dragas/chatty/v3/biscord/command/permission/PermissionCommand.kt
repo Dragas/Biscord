@@ -2,7 +2,6 @@ package lt.saltyjuice.dragas.chatty.v3.biscord.command.permission
 
 import lt.saltyjuice.dragas.chatty.v3.biscord.Settings
 import lt.saltyjuice.dragas.chatty.v3.biscord.command.discord.ProtectedDiscordCommand
-import lt.saltyjuice.dragas.chatty.v3.discord.message.builder.MessageBuilder
 import lt.saltyjuice.dragas.utility.kommander.annotations.Modifier
 
 abstract class PermissionCommand : ProtectedDiscordCommand()
@@ -15,9 +14,9 @@ abstract class PermissionCommand : ProtectedDiscordCommand()
 
     protected abstract val verb : String
 
-    override fun onValidate(permissionGranted: Boolean): Boolean
+    override fun onValidate(): Boolean
     {
-        if(!super.onValidate(permissionGranted))
+        if(!super.onValidate())
             return false
         if(permission == 0L)
         {

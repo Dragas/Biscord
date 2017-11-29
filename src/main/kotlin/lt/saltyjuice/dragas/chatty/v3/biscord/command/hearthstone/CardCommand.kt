@@ -1,6 +1,6 @@
 package lt.saltyjuice.dragas.chatty.v3.biscord.command.hearthstone
 
-import lt.saltyjuice.dragas.chatty.v3.biscord.command.discord.DiscordCommand
+import lt.saltyjuice.dragas.chatty.v3.biscord.command.discord.ProtectedDiscordCommand
 import lt.saltyjuice.dragas.chatty.v3.biscord.entity.Card
 import lt.saltyjuice.dragas.chatty.v3.biscord.entity.Type
 import lt.saltyjuice.dragas.chatty.v3.biscord.utility.CardUtility
@@ -13,8 +13,9 @@ import kotlin.streams.toList
 
 @Name("hscard")
 @Description("Returns any hearthstone card you would ever want")
-open class CardCommand : DiscordCommand()
+open class CardCommand : ProtectedDiscordCommand()
 {
+    override val requiredPermissions: Long = 0
     @Modifier("c", "-creates")
     @JvmField
     @Description("Whether or not should the returned list consist of only created cards.")
@@ -128,14 +129,14 @@ open class CardCommand : DiscordCommand()
         respond(sb.toString())
     }
 
-    override fun validate(): Boolean
+    override fun onValidate(): Boolean
     {
         if (cardName.isBlank())
         {
             respond("Card name is required.")
             return false
         }
-        return true
+        return super.onValidate()
     }
 
     fun getCardList(): Collection<Card>
