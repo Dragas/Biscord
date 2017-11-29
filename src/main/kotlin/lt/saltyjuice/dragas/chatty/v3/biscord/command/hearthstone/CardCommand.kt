@@ -2,8 +2,10 @@ package lt.saltyjuice.dragas.chatty.v3.biscord.command.hearthstone
 
 import lt.saltyjuice.dragas.chatty.v3.biscord.command.discord.ProtectedDiscordCommand
 import lt.saltyjuice.dragas.chatty.v3.biscord.entity.Card
+import lt.saltyjuice.dragas.chatty.v3.biscord.entity.Tag
 import lt.saltyjuice.dragas.chatty.v3.biscord.entity.Type
 import lt.saltyjuice.dragas.chatty.v3.biscord.utility.CardUtility
+import lt.saltyjuice.dragas.chatty.v3.biscord.utility.HibernateUtil
 import lt.saltyjuice.dragas.chatty.v3.discord.message.builder.MessageBuilder
 import lt.saltyjuice.dragas.utility.kommander.annotations.Description
 import lt.saltyjuice.dragas.utility.kommander.annotations.Modifier
@@ -60,8 +62,13 @@ open class CardCommand : ProtectedDiscordCommand()
     @Description("Card name or card ID to look for (required)")
     fun cardName(cardName: String)
     {
-        if (this.cardName.isBlank())
-            this.cardName = exceptionMap.getOrDefault(cardName, cardName).toLowerCase()
+        HibernateUtil.executeSimpleTransaction()
+        { session ->
+            val query = session.createQuery("from Tag tag where lower(tag.key) = :cardname", Tag::class.java)
+            query.setParameter("cardname", cardName)
+            val result = query.resultList
+            this.cardName = if(result.isNotEmpty()) result[0].value else cardName
+        }
     }
 
     override fun execute()
@@ -236,16 +243,5 @@ open class CardCommand : ProtectedDiscordCommand()
     {
         @JvmStatic
         private val wordsAndSpace = Regex("[^\\w\\s]")
-
-        @JvmStatic
-        private val exceptionMap: HashMap<String, String> = hashMapOf(
-                Pair("Pot of Greed", "Arcane Intellect"),
-                Pair("Black Lotus", "Innervate"),
-                Pair("Dr. Balance", "Dr. Boom"),
-                Pair("Dr Balance", "Dr. Boom"),
-                Pair("Shit", "\"(You)\""),
-                Pair("nzoth", "N'Zoth, the Corruptor"),
-                Pair("yogg", "Yogg-Saron, Hope's End")
-        )
     }
 }

@@ -44,7 +44,8 @@ class KommanderController : Controller
                 PurgeCommand::class.java,
                 GrantPermissionCommand::class.java,
                 DenyPermissionCommand::class.java,
-                RefreshCardDatabaseCommand::class.java
+                RefreshCardDatabaseCommand::class.java,
+                TagCommand::class.java
         ).initialize()
 
         @JvmStatic
