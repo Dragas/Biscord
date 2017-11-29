@@ -1,9 +1,11 @@
 package lt.saltyjuice.dragas.chatty.v3.biscord.controller
 
 import lt.saltyjuice.dragas.chatty.v3.biscord.clearMyMentions
-import lt.saltyjuice.dragas.chatty.v3.biscord.command.CardCommand
-import lt.saltyjuice.dragas.chatty.v3.biscord.command.DeckCommand
-import lt.saltyjuice.dragas.chatty.v3.biscord.command.PurgeCommand
+import lt.saltyjuice.dragas.chatty.v3.biscord.command.*
+import lt.saltyjuice.dragas.chatty.v3.biscord.command.hearthstone.CardCommand
+import lt.saltyjuice.dragas.chatty.v3.biscord.command.hearthstone.DeckCommand
+import lt.saltyjuice.dragas.chatty.v3.biscord.command.permission.DenyPermissionCommand
+import lt.saltyjuice.dragas.chatty.v3.biscord.command.permission.GrantPermissionCommand
 import lt.saltyjuice.dragas.chatty.v3.biscord.doIf
 import lt.saltyjuice.dragas.chatty.v3.core.controller.Controller
 import lt.saltyjuice.dragas.chatty.v3.core.route.On
@@ -36,7 +38,13 @@ class KommanderController : Controller
     companion object
     {
         @JvmStatic
-        protected val kommander: Kommander = Kommander(CardCommand::class.java, DeckCommand::class.java, PurgeCommand::class.java).initialize()
+        protected val kommander: Kommander = Kommander(
+                CardCommand::class.java,
+                DeckCommand::class.java,
+                PurgeCommand::class.java,
+                GrantPermissionCommand::class.java,
+                DenyPermissionCommand::class.java
+        ).initialize()
 
         @JvmStatic
         fun execute(commandLine: String)
