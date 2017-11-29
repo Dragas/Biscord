@@ -20,5 +20,6 @@
         <mapping class="lt.saltyjuice.dragas.chatty.v3.biscord.entity.Card"/>
         <mapping class="lt.saltyjuice.dragas.chatty.v3.biscord.entity.KThread"/>
         <mapping class="lt.saltyjuice.dragas.chatty.v3.biscord.entity.User"/>
+        <mapping class="lt.saltyjuice.dragas.chatty.v3.biscord.entity.Tag"/>
     </session-factory>
 </hibernate-configuration>
