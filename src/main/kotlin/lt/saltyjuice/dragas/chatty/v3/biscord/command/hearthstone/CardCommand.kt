@@ -1,5 +1,6 @@
-package lt.saltyjuice.dragas.chatty.v3.biscord.command
+package lt.saltyjuice.dragas.chatty.v3.biscord.command.hearthstone
 
+import lt.saltyjuice.dragas.chatty.v3.biscord.command.discord.DiscordCommand
 import lt.saltyjuice.dragas.chatty.v3.biscord.entity.Card
 import lt.saltyjuice.dragas.chatty.v3.biscord.entity.Type
 import lt.saltyjuice.dragas.chatty.v3.biscord.utility.CardUtility
@@ -169,7 +170,7 @@ open class CardCommand : DiscordCommand()
 
     private fun filterForSingle(it: Card): Boolean
     {
-        return it.name.toLowerCase().replace(wordsAndSpace, "") == cardName.toLowerCase()
+        return it.name.toLowerCase().replace(wordsAndSpace, "") == cardName.replace(wordsAndSpace, "").toLowerCase()
     }
 
     private fun getCards(listToFilter: Collection<Card>, filter: ((Card) -> Boolean)): Collection<Card>

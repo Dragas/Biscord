@@ -1,5 +1,6 @@
-package lt.saltyjuice.dragas.chatty.v3.biscord.command
+package lt.saltyjuice.dragas.chatty.v3.biscord.command.hearthstone
 
+import lt.saltyjuice.dragas.chatty.v3.biscord.command.discord.DiscordCommand
 import lt.saltyjuice.dragas.chatty.v3.biscord.entity.Card
 import lt.saltyjuice.dragas.chatty.v3.biscord.plus
 import lt.saltyjuice.dragas.chatty.v3.biscord.utility.DeckWorker
@@ -8,7 +9,6 @@ import lt.saltyjuice.dragas.chatty.v3.discord.message.general.Message
 import lt.saltyjuice.dragas.utility.kommander.annotations.Description
 import lt.saltyjuice.dragas.utility.kommander.annotations.Modifier
 import lt.saltyjuice.dragas.utility.kommander.annotations.Name
-import lt.saltyjuice.dragas.utility.kommander.main.Command
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
