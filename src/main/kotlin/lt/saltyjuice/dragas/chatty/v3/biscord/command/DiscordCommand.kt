@@ -11,7 +11,7 @@ import retrofit2.Callback
 abstract class DiscordCommand : Command
 {
     @Modifier("chid")
-    @Description("Redundant. Jeeves overrides this parameter anyways.")
+    @Description("Redundant. Jeeves overrides this parameter with caller's channel.")
     protected var chid: String = ""
 
 
