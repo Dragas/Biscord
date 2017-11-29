@@ -21,7 +21,7 @@ open class CardCommand : DiscordCommand()
 
     @Modifier("i", "-image")
     @JvmField
-    @Description("Whether or not should the returned list be of card images (prioritized artwork)")
+    @Description("Whether or not should the returned list be of card images (prioritized over artwork)")
     var shouldBeImage: Boolean = false
 
     @Modifier("m", "-many")
