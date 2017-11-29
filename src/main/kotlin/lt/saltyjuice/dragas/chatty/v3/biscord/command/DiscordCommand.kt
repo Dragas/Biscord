@@ -1,5 +1,7 @@
 package lt.saltyjuice.dragas.chatty.v3.biscord.command
 
+import lt.saltyjuice.dragas.chatty.v3.biscord.entity.User
+import lt.saltyjuice.dragas.chatty.v3.biscord.utility.HibernateUtil
 import lt.saltyjuice.dragas.chatty.v3.discord.message.builder.MessageBuilder
 import lt.saltyjuice.dragas.chatty.v3.discord.message.general.Embed
 import lt.saltyjuice.dragas.chatty.v3.discord.message.general.Message
@@ -28,29 +30,39 @@ abstract class DiscordCommand : Command
 
     protected open fun respond(message: String)
     {
+        if(silent)
+            return
         responseBuilder(chid, message).send()
     }
 
     protected open fun respond(embed: Embed)
     {
+        if(silent)
+            return
         responseBuilder(chid, embed).send()
     }
 
     @JvmOverloads
     protected open fun respondAsync(message: String, callback: Callback<Message>? = null)
     {
+        if(silent)
+            return
         respondAsync(responseBuilder(chid, message), callback)
     }
 
     @JvmOverloads
     protected open fun respondAsync(message: Embed, callback: Callback<Message>? = null)
     {
+        if(silent)
+            return
         respondAsync(responseBuilder(chid, message), callback)
     }
 
     @JvmOverloads
     protected open fun respondAsync(mb: MessageBuilder, callback: Callback<Message>? = null)
     {
+        if(silent)
+            return
         if (callback != null)
             mb.sendAsync(callback)
         else
@@ -71,5 +83,27 @@ abstract class DiscordCommand : Command
     override fun validate(): Boolean
     {
         return chid.isNotBlank() && userId.isNotBlank()
+    }
+
+    protected fun getRequestingUser() : User?
+    {
+        return getTargetUser(userId)
+    }
+
+    protected fun getTargetUser(userId : String) : User?
+    {
+        return HibernateUtil.executeTransaction({ session ->
+            val query = session.createQuery("from User where id = :userid", User::class.java)
+            query.setParameter("userid", userId)
+            val result = query.resultList
+            if (result.isNotEmpty())
+            {
+                result[0]
+            }
+            else
+            {
+                null
+            }
+        })
     }
 }
