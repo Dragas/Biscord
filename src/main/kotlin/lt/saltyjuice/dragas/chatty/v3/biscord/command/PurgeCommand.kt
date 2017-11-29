@@ -45,9 +45,4 @@ class PurgeCommand : ProtectedDiscordCommand()
             respond("Purging failed. Reason `$err`. Check logs for more information")
         }
     }
-
-    override fun onValidate(permissionGranted: Boolean): Boolean
-    {
-        return permissionGranted
-    }
 }
