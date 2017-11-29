@@ -1,5 +1,13 @@
 package lt.saltyjuice.dragas.chatty.v3.biscord.command
 
+import lt.saltyjuice.dragas.chatty.v3.discord.message.builder.MessageBuilder
+import lt.saltyjuice.dragas.chatty.v3.discord.message.general.Embed
+import lt.saltyjuice.dragas.chatty.v3.discord.message.general.Message
+import lt.saltyjuice.dragas.utility.kommander.annotations.Description
+import lt.saltyjuice.dragas.utility.kommander.annotations.Modifier
+import lt.saltyjuice.dragas.utility.kommander.main.Command
+import retrofit2.Callback
+
 abstract class DiscordCommand : Command
 {
     @Modifier("chid")
