@@ -1,4 +1,4 @@
-package lt.saltyjuice.dragas.chatty.v3.biscord.command
+package lt.saltyjuice.dragas.chatty.v3.biscord.command.discord
 
 import lt.saltyjuice.dragas.chatty.v3.biscord.entity.User
 import lt.saltyjuice.dragas.chatty.v3.biscord.utility.HibernateUtil
