@@ -26,11 +26,11 @@ class RefreshCardDatabaseCommand : PurgeCommand()
                 CardUtility.consumeCards(setOf())
                 CardUtility.initialize()
             }
-            respondAsync("Done. Execution took $time ms")
+            respond("Done. Execution took $time ms")
         }
         catch (err: Exception)
         {
-            respondAsync("Something happened: `err`. Check logs for more information")
+            respond("Something happened: `err`. Check logs for more information")
             throw err
         }
     }
