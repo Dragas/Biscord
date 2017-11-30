@@ -10,7 +10,7 @@ import kotlin.streams.toList
 abstract class PermissionCommand : ProtectedDiscordCommand()
 {
     @Modifier("target")
-    protected fun targetUserId(id: String)
+    protected fun parseTargetUserIds(id: String)
     {
         targetIds = id
                 .split(separationRegex)
@@ -22,9 +22,19 @@ abstract class PermissionCommand : ProtectedDiscordCommand()
 
     }
 
+    @Modifier("")
+    protected fun parsePermissions(permissions : String)
+    {
+        permission = permissions
+                .split("&")
+                .parallelStream()
+                .map(String::toLong)
+                .reduce({target : Long, current : Long -> target.or(current)})
+                .get()
+    }
+
     protected var targetIds: List<String> = listOf()
 
-    @Modifier("")
     protected var permission: Long = 0L
 
     protected abstract val verb: String
