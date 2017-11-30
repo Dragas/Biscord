@@ -12,13 +12,8 @@ class GrantPermissionCommand : PermissionCommand()
     override val requiredPermissions: Long = 2L
     override val verb: String = "grant"
 
-    override fun execute()
+    override fun applyChanges(user: User)
     {
-        val target = getTargetUser(targetUserId) ?: User(targetUserId)
-        target.permissions = target.permissions.or(permission)
-        HibernateUtil.executeSimpleTransaction({ session ->
-            session.saveOrUpdate(target)
-        })
-        respond("Done. Now <@$targetUserId> has permission level of ${target.permissions}")
+        user.permissions = user.permissions.or(permission)
     }
 }

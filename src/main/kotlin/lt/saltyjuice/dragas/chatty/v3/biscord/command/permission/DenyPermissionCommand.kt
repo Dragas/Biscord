@@ -12,14 +12,9 @@ class DenyPermissionCommand : PermissionCommand()
     override val requiredPermissions: Long = 2L
     override val verb: String = "deny"
 
-    override fun execute()
+    override fun applyChanges(user: User)
     {
-        val target = getTargetUser(targetUserId) ?: User(targetUserId)
-        if (target.permissions.and(permission) == permission)
-            target.permissions = target.permissions.xor(permission)
-        HibernateUtil.executeSimpleTransaction({ session ->
-            session.saveOrUpdate(target)
-        })
-        respond("Done. Now <@$targetUserId> has permission level of ${target.permissions}.")
+        if (user.permissions.and(permission) == permission)
+            user.permissions = user.permissions.xor(permission)
     }
 }

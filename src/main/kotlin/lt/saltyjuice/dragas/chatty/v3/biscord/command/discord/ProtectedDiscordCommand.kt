@@ -36,7 +36,7 @@ abstract class ProtectedDiscordCommand : DiscordCommand()
         return getTargetUser(userId)
     }
 
-    protected fun getTargetUser(userId : String) : User?
+    protected fun getTargetUser(userId : String) : User
     {
         return HibernateUtil.executeTransaction({ session ->
             val query = session.createQuery("from User where id = :userid", User::class.java)
@@ -48,7 +48,7 @@ abstract class ProtectedDiscordCommand : DiscordCommand()
             }
             else
             {
-                null
+                User(userId)
             }
         })
     }
