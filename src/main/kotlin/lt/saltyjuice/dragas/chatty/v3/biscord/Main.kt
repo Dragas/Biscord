@@ -8,9 +8,11 @@ import lt.saltyjuice.dragas.chatty.v3.biscord.utility.CardUtility
 import lt.saltyjuice.dragas.chatty.v3.discord.controller.DiscordConnectionController
 import lt.saltyjuice.dragas.chatty.v3.discord.main.DiscordClient
 import lt.saltyjuice.dragas.chatty.v3.discord.message.general.Message
+import lt.saltyjuice.dragas.chatty.v3.discord.message.general.User
 import lt.saltyjuice.dragas.utility.khan4.Client
 import lt.saltyjuice.dragas.utility.khan4.Khan
 import okhttp3.logging.HttpLoggingInterceptor
+import java.util.*
 
 
 fun main(args: Array<String>) = runBlocking<Unit>
@@ -57,6 +59,10 @@ public operator fun Pair<Int, Int>.plus(another: Pair<Int, Int>): Pair<Int, Int>
     return Pair(first, second)
 }
 
+fun User.getAge(): Long
+{
+    return Date().time - (this.id.toLong().shr(22))
+}
 
 fun getenv(name: String, default: String): String
 {
