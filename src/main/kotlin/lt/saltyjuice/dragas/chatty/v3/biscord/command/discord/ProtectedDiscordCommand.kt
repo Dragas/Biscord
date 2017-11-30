@@ -16,7 +16,7 @@ abstract class ProtectedDiscordCommand : DiscordCommand()
         if (!permissionGranted)
         {
             val user = getRequestingUser()
-            val userPermissions = user?.permissions ?: 0
+            val userPermissions = user.permissions
             permissionGranted = userPermissions.and(requiredPermissions) == requiredPermissions
         }
         if(!permissionGranted)
@@ -31,7 +31,8 @@ abstract class ProtectedDiscordCommand : DiscordCommand()
     {
         return true
     }
-    protected fun getRequestingUser() : User?
+
+    protected fun getRequestingUser() : User
     {
         return getTargetUser(userId)
     }
