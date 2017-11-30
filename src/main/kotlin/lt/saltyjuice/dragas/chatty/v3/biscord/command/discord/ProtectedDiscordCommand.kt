@@ -16,7 +16,7 @@ abstract class ProtectedDiscordCommand : DiscordCommand()
         if (!permissionGranted)
         {
             val user = getRequestingUser()
-            val userPermissions = user?.permissions ?: 0
+            val userPermissions = user.permissions
             permissionGranted = userPermissions.and(requiredPermissions) == requiredPermissions
         }
         if(!permissionGranted)
@@ -31,12 +31,13 @@ abstract class ProtectedDiscordCommand : DiscordCommand()
     {
         return true
     }
-    protected fun getRequestingUser() : User?
+
+    protected fun getRequestingUser() : User
     {
         return getTargetUser(userId)
     }
 
-    protected fun getTargetUser(userId : String) : User?
+    protected fun getTargetUser(userId : String) : User
     {
         return HibernateUtil.executeTransaction({ session ->
             val query = session.createQuery("from User where id = :userid", User::class.java)
@@ -48,7 +49,7 @@ abstract class ProtectedDiscordCommand : DiscordCommand()
             }
             else
             {
-                null
+                User(userId)
             }
         })
     }

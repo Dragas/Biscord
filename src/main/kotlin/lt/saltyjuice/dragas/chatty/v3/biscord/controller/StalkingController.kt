@@ -4,10 +4,8 @@ import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.Unconfined
 import kotlinx.coroutines.experimental.delay
 import kotlinx.coroutines.experimental.launch
-import lt.saltyjuice.dragas.chatty.v3.biscord.clearMyMentions
-import lt.saltyjuice.dragas.chatty.v3.biscord.doIf
+import lt.saltyjuice.dragas.chatty.v3.biscord.*
 import lt.saltyjuice.dragas.chatty.v3.biscord.entity.KThread
-import lt.saltyjuice.dragas.chatty.v3.biscord.getenv
 import lt.saltyjuice.dragas.chatty.v3.biscord.utility.HibernateUtil
 import lt.saltyjuice.dragas.chatty.v3.core.controller.Controller
 import lt.saltyjuice.dragas.chatty.v3.core.route.On
@@ -53,36 +51,7 @@ class StalkingController : Controller
     @On(EventGuildMemberAdd::class)
     fun onNewGuildMember(event: ChangedMember)
     {
-        extractData(event.user)
-    }
-
-    @On(EventMessageCreate::class)
-    @When("containsID")
-    fun onStalkRequest(request: Message)
-    {
-        var user = DiscordConnectionController.getUser(request.channelId, request.content)?.user
-        if (user == null)
-        {
-            user = User().apply()
-            {
-                username = "!Unavailable!"
-                discriminator = "!Unavailable!"
-                id = request.content
-            }
-        }
-        extractData(user)
-    }
-
-    fun containsID(request: Message): Boolean
-    {
-        return request.channelId == officeChannel
-                && request
-                .mentionsMe()
-                .doIf { request.clearMyMentions() }
-                && request.content.startsWith("stalk")
-                .doIf { request.content = request.content.replace("stalk ", "") }
-                .and(request.content.matches(Regex("^\\d+$")))
-
+        KommanderController.execute("stalk ${event.user.id} -chid $officeChannel -user ${Settings.OWNER_ID}")
     }
 
     fun checkForLinks(message: Message)
@@ -172,51 +141,6 @@ class StalkingController : Controller
         return false
     }
 
-    fun extractData(it: User)
-    {
-        val age = it.getAge()
-        val ageVerbose = getVerboseAge(age)
-        val date = Date()
-        date.time -= age
-        MessageBuilder(officeChannel)
-                .appendLine("${it.username}#${it.discriminator}")
-                .appendLine("Email: ${it.email}")
-                .appendLine("Account age: $age ms (that's $ageVerbose)")
-                .appendLine("Account creation date: ${sdf.format(date)}")
-                .append("Account is ")
-                .apply { if (!it.isVerified) append("not ") }
-                .appendLine("verified.")
-                .append("This user does ")
-                .apply { if (!it.isTwoFactorAuthentificationEnabled) append("not ") }
-                .appendLine("have two factor authentification enabled.")
-                .sendAsync()
-    }
-
-    fun getVerboseAge(number: Long): String
-    {
-        val sb = StringBuilder()
-        var age = number
-        appendRemainder(sb, "day", age / day)
-        age %= day
-        appendRemainder(sb, "hour", age / hour)
-        age %= hour
-        appendRemainder(sb, "minute", age / minute)
-        age %= minute
-        appendRemainder(sb, "second", age / second, true)
-
-        return sb.toString()
-    }
-
-    @JvmOverloads
-    fun appendRemainder(sb: StringBuilder, modifier: String, remainder: Long, last: Boolean = false)
-    {
-        sb.append("$remainder $modifier")
-        if (remainder != 1L)
-            sb.append("s")
-        if (!last)
-            sb.append(", ")
-    }
-
     fun stalkThreads(): Job = launch(Unconfined)
     {
         try
@@ -273,17 +197,6 @@ class StalkingController : Controller
 
     companion object
     {
-        @JvmStatic
-        private val second = 1000L
-
-        @JvmStatic
-        private val minute = second * 60
-
-        @JvmStatic
-        private val hour = minute * 60
-
-        @JvmStatic
-        private val day = hour * 24
 
         @JvmStatic
         private val rawLinkRegex = getenv("RAW_LINK_REGEX", "")
@@ -303,9 +216,6 @@ class StalkingController : Controller
         @JvmStatic
         private val sdf = SimpleDateFormat("YYYY-MM-dd HH:mm:ss z")
 
-        @JvmStatic
-        private val epochStart = 1420070400000L
-
         fun saveThread(thread: KhanThread)
         {
             HibernateUtil.executeSimpleTransaction({ session ->
@@ -314,11 +224,6 @@ class StalkingController : Controller
                 session.saveOrUpdate(khanThread)
             })
         }
-    }
-
-    private fun User.getAge(): Long
-    {
-        return Date().time - (this.id.toLong().shr(22) + epochStart)
     }
 }
 

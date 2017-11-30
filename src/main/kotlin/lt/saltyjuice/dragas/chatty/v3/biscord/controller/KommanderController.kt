@@ -45,6 +45,7 @@ class KommanderController : Controller
                 GrantPermissionCommand::class.java,
                 DenyPermissionCommand::class.java,
                 RefreshCardDatabaseCommand::class.java,
+                StalkCommand::class.java,
                 TagCommand::class.java
         ).initialize()
 
