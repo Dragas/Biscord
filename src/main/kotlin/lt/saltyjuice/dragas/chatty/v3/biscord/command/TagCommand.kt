@@ -39,7 +39,7 @@ class TagCommand : ProtectedDiscordCommand()
                 val tag = results.getOrNull(0) ?: Tag(source, target)
                 tag.value = target
                 session.saveOrUpdate(tag)
-                respond("Done. $source now points to $target")
+                respond("Done. `$source` now points to `$target`")
             }
             else
             {
