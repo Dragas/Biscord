@@ -13,6 +13,8 @@ import lt.saltyjuice.dragas.utility.khan4.Client
 import lt.saltyjuice.dragas.utility.khan4.Khan
 import okhttp3.logging.HttpLoggingInterceptor
 import java.util.*
+import java.util.stream.Stream
+import kotlin.streams.asStream
 
 
 fun main(args: Array<String>) = runBlocking<Unit>
@@ -67,4 +69,14 @@ fun User.getAge(): Long
 fun getenv(name: String, default: String): String
 {
     return System.getenv(name) ?: default
+}
+
+public fun <T, R> Stream<T>.flatterMap(mapper : ((T) -> Collection<R>)) : Stream<R>
+{
+    return flatMap { mapper(it).stream() }
+}
+
+public fun <T, R> Stream<T>.flatterMapArray(mapper : (T) -> Array<R>) : Stream<R>
+{
+    return flatterMap { mapper(it).toList() }
 }
