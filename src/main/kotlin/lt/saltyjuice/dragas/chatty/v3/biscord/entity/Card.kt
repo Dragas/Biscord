@@ -11,7 +11,6 @@ import javax.persistence.*
 import lt.saltyjuice.dragas.chatty.v3.biscord.entity.Type as CardType
 
 @Entity
-@Table(name = "cards")
 @TypeDefs(TypeDef(name = "string-array", typeClass = StringArrayType::class))
 open class Card : Comparable<Card>
 {
@@ -131,7 +130,6 @@ open class Card : Comparable<Card>
     @SerializedName("mechanics")
     @Column(columnDefinition = "text[]", nullable = false)
     @Type(type = "string-array")
-    @ColumnDefault("[]")
     open var mechanics : Array<String> = arrayOf()
 
     fun getStatisticsURL(): String
