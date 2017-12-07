@@ -1,4 +1,5 @@
 package lt.saltyjuice.dragas.chatty.v3.biscord
+
 import kotlinx.coroutines.experimental.runBlocking
 import lt.saltyjuice.dragas.chatty.v3.biscord.controller.CardController
 import lt.saltyjuice.dragas.chatty.v3.biscord.controller.DeckController
@@ -31,6 +32,8 @@ fun main(args: Array<String>) = runBlocking<Unit>
             KommanderController::class.java,
             CardController::class.java
     ).apply { work() }
+
+    listOf<String>().joinToString()
 }
 
 public fun Boolean.doIf(predicate: () -> Unit): Boolean
@@ -40,9 +43,9 @@ public fun Boolean.doIf(predicate: () -> Unit): Boolean
     return this
 }
 
-public fun Boolean.doUnless(predicate: () -> Unit) : Boolean
+public fun Boolean.doUnless(predicate: () -> Unit): Boolean
 {
-    if(!this)
+    if (!this)
         predicate.invoke()
     return this
 }
@@ -71,12 +74,49 @@ fun getenv(name: String, default: String): String
     return System.getenv(name) ?: default
 }
 
-public fun <T, R> Stream<T>.flatterMap(mapper : ((T) -> Collection<R>)) : Stream<R>
+public fun <T, R> Stream<T>.flatterMap(mapper: ((T) -> Collection<R>)): Stream<R>
 {
     return flatMap { mapper(it).stream() }
 }
 
-public fun <T, R> Stream<T>.flatterMapArray(mapper : (T) -> Array<R>) : Stream<R>
+public fun <T, R> Stream<T>.flatterMapArray(mapper: (T) -> Array<R>): Stream<R>
 {
     return flatterMap { mapper(it).toList() }
+}
+
+/**
+ * Attempts to roughly separate the list into list of strings that are below target limit.
+ */
+@JvmOverloads
+fun <T> Iterable<T>.joinToStrings(separator: String = ", ", limit: Int): List<String>
+{
+    val resultList = mutableListOf<MutableList<String>>()
+    var currentList = mutableListOf<String>()
+    var counter = 0
+    val iterator = iterator()
+    for (t in iterator)
+    {
+        if (t == null)
+            continue
+        val stringified = t.toString()
+        if (counter + stringified.length + separator.length > limit)
+        {
+            resultList.add(currentList)
+            currentList = mutableListOf()
+            counter = 0
+        }
+        if (currentList.isNotEmpty())
+            counter += separator.length
+        counter += stringified.length
+        currentList.add(stringified)
+        if (!iterator.hasNext())
+            resultList.add(currentList)
+    }
+
+    return resultList.map { it.joinToString(separator, limit = limit) }
+}
+
+inline fun <T> T.runIf(condition : Boolean, block : T.() -> T) : T
+{
+    return if(condition) block() else this
 }
