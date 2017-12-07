@@ -24,6 +24,9 @@ object CardUtility : Callback<Set<Card>>
     var mechanics : List<String> = listOf()
 
     @JvmStatic
+    var classes : List<String> = listOf()
+
+    @JvmStatic
     @JvmOverloads
     fun initialize(cards: Set<Card> = setOf())
     {
@@ -143,6 +146,13 @@ object CardUtility : Callback<Set<Card>>
                 .map(Card::rarity)
                 .distinct()
                 .filter { it.isNotBlank() || it != "null" }
+                .map(String::toLowerCase)
+                .toList()
+        classes = cardss
+                .parallelStream()
+                .map(Card::playerClass)
+                .distinct()
+                .filter { it.isNotBlank() || it != null }
                 .map(String::toLowerCase)
                 .toList()
     }
