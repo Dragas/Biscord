@@ -37,6 +37,6 @@ class CardController : Controller
     companion object
     {
         @JvmStatic
-        private val regex: Regex = Regex("\\[\\[[\\s\\w]+\\]\\]")
+        private val regex: Regex = Regex("\\[\\[[\\s\\w-]+\\]\\]")
     }
 }
