@@ -4,6 +4,7 @@ import lt.saltyjuice.dragas.chatty.v3.biscord.clearMyMentions
 import lt.saltyjuice.dragas.chatty.v3.biscord.command.*
 import lt.saltyjuice.dragas.chatty.v3.biscord.command.hearthstone.CardCommand
 import lt.saltyjuice.dragas.chatty.v3.biscord.command.hearthstone.DeckCommand
+import lt.saltyjuice.dragas.chatty.v3.biscord.command.hearthstone.ReminderCommand
 import lt.saltyjuice.dragas.chatty.v3.biscord.command.permission.DenyPermissionCommand
 import lt.saltyjuice.dragas.chatty.v3.biscord.command.permission.GrantPermissionCommand
 import lt.saltyjuice.dragas.chatty.v3.biscord.doIf
@@ -29,7 +30,12 @@ class KommanderController : Controller
     {
         if (message.content.toLowerCase().equals("help") || message.content.isBlank())
         {
-            MessageBuilder(message.channelId).beginCodeSnippet("").append(kommander.description).endCodeSnippet().sendAsync()
+            kommander
+                    .description
+                    .split(System.lineSeparator().repeat(2))
+                    .filter { it.isNotBlank() }
+                    .map { MessageBuilder(message.channelId).beginCodeSnippet("").append(it).endCodeSnippet() }
+                    .forEach { it.sendAsync() }
             return
         }
         execute(message.content + " -chid ${message.channelId} -user ${message.author.id}")
@@ -46,7 +52,8 @@ class KommanderController : Controller
                 DenyPermissionCommand::class.java,
                 RefreshCardDatabaseCommand::class.java,
                 StalkCommand::class.java,
-                TagCommand::class.java
+                TagCommand::class.java,
+                ReminderCommand::class.java
         ).initialize()
 
         @JvmStatic

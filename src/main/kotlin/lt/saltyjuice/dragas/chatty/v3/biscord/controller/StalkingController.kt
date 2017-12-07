@@ -98,7 +98,7 @@ class StalkingController : Controller
     {
         try
         {
-            val response = Utility.discordAPI.createChannel(PrivateChannelBuilder(author.id)).execute()
+            val response = PrivateChannelBuilder(author.id).send()
             return response.body()
         }
         catch (err: Throwable)
@@ -114,7 +114,7 @@ class StalkingController : Controller
 
         val dateAsString = sdf.format(message.timestamp)
         MessageBuilder(officeChannel)
-                .appendLine("@everyone : ATTENTION! Possible spammer detected!")
+                .appendLine("@everyone: ATTENTION! Possible spammer detected!")
                 .appendLine("User (id): ${message.author.username}#${message.author.discriminator} (${message.author.id})")
                 .appendLine("MessageID: ${message.id}")
                 .append("Channel: ")

@@ -3,6 +3,7 @@ package lt.saltyjuice.dragas.chatty.v3.biscord.entity
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import com.vladmihalcea.hibernate.type.array.StringArrayType
+import org.hibernate.annotations.ColumnDefault
 import org.hibernate.annotations.Type
 import org.hibernate.annotations.TypeDef
 import org.hibernate.annotations.TypeDefs
@@ -10,7 +11,6 @@ import javax.persistence.*
 import lt.saltyjuice.dragas.chatty.v3.biscord.entity.Type as CardType
 
 @Entity
-@Table(name = "cards")
 @TypeDefs(TypeDef(name = "string-array", typeClass = StringArrayType::class))
 open class Card : Comparable<Card>
 {
@@ -87,7 +87,13 @@ open class Card : Comparable<Card>
 
     @Expose
     @SerializedName("elite")
-    open var elite: String = ""
+    @Column(name = "elite_boolean", nullable = false)
+    @ColumnDefault("false")
+    open var elite: Boolean = false
+
+    @Deprecated("kept for database constraints. use elite field instead")
+    @Column(name = "elite", nullable = true)
+    open var oldElite : String? = null
 
     @Expose
     @SerializedName("race")
@@ -119,6 +125,12 @@ open class Card : Comparable<Card>
     @Expose
     @SerializedName("durability")
     open var durability: Int = 0
+
+    @Expose
+    @SerializedName("mechanics")
+    @Column(columnDefinition = "text[]", nullable = false)
+    @Type(type = "string-array")
+    open var mechanics : Array<String> = arrayOf()
 
     fun getStatisticsURL(): String
     {

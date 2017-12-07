@@ -2,6 +2,8 @@ package lt.saltyjuice.dragas.chatty.v3.biscord.utility
 
 import lt.saltyjuice.dragas.chatty.v3.biscord.doIf
 import lt.saltyjuice.dragas.chatty.v3.biscord.entity.Card
+import lt.saltyjuice.dragas.chatty.v3.biscord.flatterMap
+import lt.saltyjuice.dragas.chatty.v3.biscord.flatterMapArray
 import org.hibernate.query.Query
 import retrofit2.Call
 import retrofit2.Callback
@@ -13,7 +15,16 @@ object CardUtility : Callback<Set<Card>>
 {
 
     @JvmStatic
-    private var cardss = setOf<Card>()
+    private var cardss : Set<Card> = setOf<Card>()
+
+    @JvmStatic
+    var rarities : List<String> = listOf()
+
+    @JvmStatic
+    var mechanics : List<String> = listOf()
+
+    @JvmStatic
+    var classes : List<String> = listOf()
 
     @JvmStatic
     @JvmOverloads
@@ -123,10 +134,31 @@ object CardUtility : Callback<Set<Card>>
                             .filter(Optional<Card>::isPresent)
                             .map(Optional<Card>::get)
                 }
+        mechanics = cardss
+                .parallelStream()
+                .flatterMapArray(Card::mechanics)
+                .distinct()
+                .map(String::toLowerCase)
+                .map { it.replace("_", " ") }
+                .toList()
+        rarities = cardss
+                .parallelStream()
+                .map(Card::rarity)
+                .distinct()
+                .filter { it.isNotBlank() || it != "null" }
+                .map(String::toLowerCase)
+                .toList()
+        classes = cardss
+                .parallelStream()
+                .map(Card::playerClass)
+                .distinct()
+                .filter { it.isNotBlank() || it != null }
+                .map(String::toLowerCase)
+                .toList()
     }
 
     @JvmStatic
-    fun saveCards()
+    private fun saveCards()
     {
         HibernateUtil.executeTransaction<Unit>({ session ->
             cardss

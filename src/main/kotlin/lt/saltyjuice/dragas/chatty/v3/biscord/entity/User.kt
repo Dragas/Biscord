@@ -9,8 +9,8 @@ import javax.persistence.Table
 open class User @JvmOverloads constructor(targetUserId: String = "")
 {
     @Id
-    var id : String = targetUserId
+    open var id: String = targetUserId
 
-    var permissions : Long = 0
+    open var permissions: Long = 0
 
 }
