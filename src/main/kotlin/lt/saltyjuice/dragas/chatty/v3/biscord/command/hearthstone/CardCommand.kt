@@ -192,7 +192,7 @@ open class CardCommand : ProtectedDiscordCommand()
 
     private fun filterForMany(it: Card): Boolean
     {
-        return it.name.toLowerCase().replace(wordsAndSpace, "").contains(cardName)
+        return it.name.toLowerCase().replace(wordsAndSpace, "").contains(cardName.replace(wordsAndSpace, "").toLowerCase())
     }
 
 
@@ -225,6 +225,7 @@ open class CardCommand : ProtectedDiscordCommand()
                         }
                     }
                 }
+                .apply { if(it.elite) append("ELITE") }
                 .appendLine("${it.type}]")
                 .appendLine("[Set: ${it.cardSet}]")
                 .appendLine(it.text)
