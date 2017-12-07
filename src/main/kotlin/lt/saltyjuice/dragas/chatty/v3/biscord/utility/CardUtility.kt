@@ -138,7 +138,7 @@ object CardUtility : Callback<Set<Card>>
     }
 
     @JvmStatic
-    fun saveCards()
+    private fun saveCards()
     {
         HibernateUtil.executeTransaction<Unit>({ session ->
             cardss
