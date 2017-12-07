@@ -18,6 +18,9 @@ object CardUtility : Callback<Set<Card>>
     private var cardss : Set<Card> = setOf<Card>()
 
     @JvmStatic
+    var rarities : List<String> = listOf()
+
+    @JvmStatic
     var mechanics : List<String> = listOf()
 
     @JvmStatic
@@ -134,6 +137,13 @@ object CardUtility : Callback<Set<Card>>
                 .distinct()
                 .map(String::toLowerCase)
                 .map { it.replace("_", " ") }
+                .toList()
+        rarities = cardss
+                .parallelStream()
+                .map(Card::rarity)
+                .distinct()
+                .filter { it.isNotBlank() || it != "null" }
+                .map(String::toLowerCase)
                 .toList()
     }
 
