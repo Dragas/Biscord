@@ -243,6 +243,6 @@ open class CardCommand : ProtectedDiscordCommand()
     companion object
     {
         @JvmStatic
-        private val wordsAndSpace = Regex("[^\\w\\s]")
+        private val wordsAndSpace = Regex("[^\\w\\s-]")
     }
 }
