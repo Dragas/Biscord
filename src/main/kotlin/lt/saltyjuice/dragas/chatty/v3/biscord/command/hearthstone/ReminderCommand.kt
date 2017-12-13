@@ -106,6 +106,7 @@ class ReminderCommand : ProtectedDiscordCommand()
         type = types
                 .firstOrNull { defaultArg.contains(it, true) }
                 ?.apply { defaultArg = defaultArg.replace(this, "", true) }
+                ?.toUpperCase()
                 ?.run(Type::valueOf)
         clazz = CardUtility
                 .classes
