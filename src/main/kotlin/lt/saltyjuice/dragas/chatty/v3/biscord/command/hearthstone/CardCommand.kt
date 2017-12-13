@@ -225,7 +225,7 @@ open class CardCommand : ProtectedDiscordCommand()
                         }
                     }
                 }
-                .apply { if(it.elite) append("ELITE") }
+                .apply { if(it.elite) append("legendary ") }
                 .appendLine("${it.type}]")
                 .appendLine("[Set: ${it.cardSet}]")
                 .appendLine(it.text)
