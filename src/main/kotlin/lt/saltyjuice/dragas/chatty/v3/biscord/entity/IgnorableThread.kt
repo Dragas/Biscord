@@ -7,7 +7,7 @@ import lt.saltyjuice.dragas.utility.khan4.entity.Thread as KhanThread
 
 @Entity
 @Table(name = "threads")
-class KThread()
+class IgnorableThread()
 {
     @Id
     var id: Long = -1
