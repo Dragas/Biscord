@@ -48,7 +48,7 @@ open class CardCommand : ProtectedDiscordCommand()
     @Modifier("l", "-limit")
     @JvmField
     @Description("How many results at most should be returned.")
-    var limit: Int = 10
+    var limit: Int = 3
 
     @Modifier("co", "-collectable")
     @JvmField
