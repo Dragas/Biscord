@@ -1,7 +1,9 @@
 package lt.saltyjuice.dragas.chatty.v3.biscord.controller
 
 import lt.saltyjuice.dragas.chatty.v3.biscord.clearMyMentions
-import lt.saltyjuice.dragas.chatty.v3.biscord.command.*
+import lt.saltyjuice.dragas.chatty.v3.biscord.command.PurgeCommand
+import lt.saltyjuice.dragas.chatty.v3.biscord.command.RefreshCardDatabaseCommand
+import lt.saltyjuice.dragas.chatty.v3.biscord.command.TagCommand
 import lt.saltyjuice.dragas.chatty.v3.biscord.command.hearthstone.CardCommand
 import lt.saltyjuice.dragas.chatty.v3.biscord.command.hearthstone.DeckCommand
 import lt.saltyjuice.dragas.chatty.v3.biscord.command.permission.DenyPermissionCommand
@@ -57,7 +59,7 @@ class KommanderController : Controller
             }
             catch (err: Exception)
             {
-                err.printStackTrace()
+                Exception("While parsing $commandLine", err).printStackTrace()
             }
         }
 
