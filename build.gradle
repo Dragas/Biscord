@@ -54,4 +54,3 @@ compileTestKotlin {
 
 apply from: "dokka.gradle"
 apply from: "jacoco.gradle"
-apply from: "hibernate.gradle"
