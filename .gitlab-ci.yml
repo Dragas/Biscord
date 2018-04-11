@@ -63,6 +63,7 @@ deploy-to-svn:
     - master
 
 deploy-to-heroku:
+  image: ruby:2.4
   stage: deploy
   environment:
     name: herokudeployment
