@@ -100,7 +100,7 @@ open class Card : Comparable<Card>
     open var race: String = ""
 
     @Expose
-    @SerializedName("playerClass")
+    @SerializedName("cardClass")
     open var playerClass: String = ""
 
     @Expose

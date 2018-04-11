@@ -31,7 +31,7 @@ fun main(args: Array<String>) = runBlocking<Unit>
             StalkingController::class.java,
             KommanderController::class.java,
             CardController::class.java
-    ).apply { work() }
+    ).work()
 
     listOf<String>().joinToString()
 }
