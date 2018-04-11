@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-apt-get update -yq && apt-get install -y ruby-dev
+apt-get update -yq && apt-get install -y ruby-full
 apt-get install -y rubygems
 gem install dpl
 dpl --provider=heroku --app=$HEROKU_APP_NAME --api-key=$HEROKU_DEPLOYMENT_API_KEY
