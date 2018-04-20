@@ -8,6 +8,8 @@ import lt.saltyjuice.dragas.chatty.v3.biscord.controller.StalkingController
 import lt.saltyjuice.dragas.chatty.v3.biscord.utility.CardUtility
 import lt.saltyjuice.dragas.chatty.v3.discord.controller.DiscordConnectionController
 import lt.saltyjuice.dragas.chatty.v3.discord.main.DiscordClient
+import lt.saltyjuice.dragas.chatty.v3.discord.message.builder.PrivateChannelBuilder
+import lt.saltyjuice.dragas.chatty.v3.discord.message.general.Channel
 import lt.saltyjuice.dragas.chatty.v3.discord.message.general.Message
 import lt.saltyjuice.dragas.chatty.v3.discord.message.general.User
 import lt.saltyjuice.dragas.utility.khan4.Client
@@ -53,9 +55,25 @@ public fun Boolean.doUnless(predicate: () -> Unit): Boolean
 public fun Message.clearMyMentions()
 {
     val id = DiscordConnectionController.getCurrentUserId()
-    this.content = this.content.replace(Regex("<@!?$id>\\s*"), "")
+    this.content = this.content.replace(Regex("<@!?$id>\\s*"), "").trim()
     this.mentionedUsers.removeIf { it.id == id }
 }
+
+
+fun initiateChannel(author: User): Channel?
+{
+    try
+    {
+        val response = PrivateChannelBuilder(author.id).send()
+        return response.body()
+    }
+    catch (err: Throwable)
+    {
+        err.printStackTrace()
+    }
+    return null
+}
+
 
 public operator fun Pair<Int, Int>.plus(another: Pair<Int, Int>): Pair<Int, Int>
 {
