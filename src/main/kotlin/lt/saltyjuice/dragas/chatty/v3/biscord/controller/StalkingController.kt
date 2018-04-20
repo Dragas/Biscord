@@ -89,20 +89,6 @@ class StalkingController : Controller
         }
     }
 
-    fun initiateChannel(author: User): Channel?
-    {
-        try
-        {
-            val response = PrivateChannelBuilder(author.id).send()
-            return response.body()
-        }
-        catch (err: Throwable)
-        {
-            err.printStackTrace()
-        }
-        return null
-    }
-
 
     fun deleteMessage(message: Message)
     {

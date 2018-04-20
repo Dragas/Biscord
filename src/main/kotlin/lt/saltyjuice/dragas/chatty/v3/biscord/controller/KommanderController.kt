@@ -11,6 +11,7 @@ import lt.saltyjuice.dragas.chatty.v3.biscord.command.hearthstone.ReminderComman
 import lt.saltyjuice.dragas.chatty.v3.biscord.command.permission.DenyPermissionCommand
 import lt.saltyjuice.dragas.chatty.v3.biscord.command.permission.GrantPermissionCommand
 import lt.saltyjuice.dragas.chatty.v3.biscord.doIf
+import lt.saltyjuice.dragas.chatty.v3.biscord.initiateChannel
 import lt.saltyjuice.dragas.chatty.v3.core.controller.Controller
 import lt.saltyjuice.dragas.chatty.v3.core.route.On
 import lt.saltyjuice.dragas.chatty.v3.core.route.When
@@ -33,12 +34,13 @@ class KommanderController : Controller
     {
         if (message.content.toLowerCase().equals("help") || message.content.isBlank())
         {
+            val channel = initiateChannel(message.author) ?: return;
             kommander
                     .description
                     .split(System.lineSeparator().repeat(2))
-                    .filter { it.isNotBlank() }
-                    .map { MessageBuilder(message.channelId).beginCodeSnippet("").append(it).endCodeSnippet() }
-                    .forEach { it.sendAsync() }
+                    .filter(String::isNotBlank)
+                    .map { MessageBuilder(channel.id).beginCodeSnippet("").append(it).endCodeSnippet() }
+                    .forEach(MessageBuilder::sendAsync)
             return
         }
         execute(message.content + " -chid ${message.channelId} -user ${message.author.id}")
