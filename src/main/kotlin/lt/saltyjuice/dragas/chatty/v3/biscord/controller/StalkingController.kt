@@ -191,7 +191,6 @@ class StalkingController : Controller
     private fun expiredThreadToMessage(thread: KhanThread): MessageBuilder
     {
         val mb = MessageBuilder(officeChannel)
-                .appendLine("@everyone")
                 .append("Thread named ${thread.subject} (https://boards.4chan.org/vg/thread/${thread.postNumber}) is at ${thread.replyCount} post")
         if (thread.replyCount != 1)
             mb.appendLine("s")
