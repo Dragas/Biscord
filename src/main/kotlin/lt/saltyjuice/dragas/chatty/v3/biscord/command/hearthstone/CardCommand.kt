@@ -113,15 +113,17 @@ open class CardCommand : ProtectedDiscordCommand()
         }
         val originalChid = chid
         if(limit > 3)
-            this.chid = PrivateChannelBuilder(userId).send().body()?.id ?: chid
-        if(originalChid == chid)
         {
-            MessageBuilder(chid)
-                    .append("Unable to PM you the results, ")
-                    .mentionId(userId, MessageBuilder.MentionType.USER)
-                    .append(". Do you have me blocked?")
-                    .sendAsync()
-            return
+            this.chid = PrivateChannelBuilder(userId).send().body()?.id ?: chid
+            if(originalChid == chid)
+            {
+                MessageBuilder(chid)
+                        .append("Unable to PM you the results, ")
+                        .mentionId(userId, MessageBuilder.MentionType.USER)
+                        .append(". Do you have me blocked?")
+                        .sendAsync()
+                return
+            }
         }
         silent = false
         list
