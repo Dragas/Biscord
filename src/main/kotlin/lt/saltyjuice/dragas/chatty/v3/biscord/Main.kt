@@ -3,7 +3,6 @@ package lt.saltyjuice.dragas.chatty.v3.biscord
 import kotlinx.coroutines.experimental.runBlocking
 import lt.saltyjuice.dragas.chatty.v3.biscord.controller.*
 import lt.saltyjuice.dragas.chatty.v3.biscord.utility.CardUtility
-import lt.saltyjuice.dragas.chatty.v3.discord.controller.DiscordConnectionController
 import lt.saltyjuice.dragas.chatty.v3.discord.main.DiscordClient
 import lt.saltyjuice.dragas.chatty.v3.discord.message.builder.PrivateChannelBuilder
 import lt.saltyjuice.dragas.chatty.v3.discord.message.general.Channel
