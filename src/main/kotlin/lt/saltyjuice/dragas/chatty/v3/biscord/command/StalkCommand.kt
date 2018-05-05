@@ -1,11 +1,11 @@
 package lt.saltyjuice.dragas.chatty.v3.biscord.command
 
 import lt.saltyjuice.dragas.chatty.v3.biscord.command.discord.ProtectedDiscordCommand
+import lt.saltyjuice.dragas.chatty.v3.biscord.controller.DiscordConnectionController
 import lt.saltyjuice.dragas.chatty.v3.biscord.controller.StalkingController
 import lt.saltyjuice.dragas.chatty.v3.biscord.getAge
 import lt.saltyjuice.dragas.chatty.v3.biscord.getenv
 import lt.saltyjuice.dragas.chatty.v3.discord.api.Utility
-import lt.saltyjuice.dragas.chatty.v3.discord.controller.DiscordConnectionController
 import lt.saltyjuice.dragas.chatty.v3.discord.message.builder.MessageBuilder
 import lt.saltyjuice.dragas.chatty.v3.discord.message.general.Member
 import lt.saltyjuice.dragas.chatty.v3.discord.message.general.User
