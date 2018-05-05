@@ -76,7 +76,8 @@ open class CardCommand : ProtectedDiscordCommand()
 
     override fun execute()
     {
-        respond("Let me get that...")
+        if(limit <= 3)
+            respond("Let me get that...")
         searchForCards()
     }
 
@@ -110,8 +111,18 @@ open class CardCommand : ProtectedDiscordCommand()
             text.append("-l ${list.size}`")
             respond(text.toString())
         }
+        val originalChid = chid
         if(limit > 3)
-            this.chid = Utility.discordAPI.createChannel(PrivateChannelBuilder(chid)).execute().body()?.id ?: ""
+            this.chid = PrivateChannelBuilder(userId).send().body()?.id ?: chid
+        if(originalChid == chid)
+        {
+            MessageBuilder(chid)
+                    .append("Unable to PM you the results, ")
+                    .mentionId(userId, MessageBuilder.MentionType.USER)
+                    .append(". Do you have me blocked?")
+                    .sendAsync()
+            return
+        }
         silent = false
         list
                 .parallelStream()
