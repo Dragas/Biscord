@@ -46,11 +46,14 @@ class StalkingController : Controller
     @On(EventGuildMemberAdd::class)
     fun onNewGuildMember(event: ChangedMember)
     {
-        KommanderController.execute("stalk ${event.user.id} -chid $officeChannel -user ${Settings.OWNER_ID}")
+        if(event.guildId == System.getenv("HSG"))
+            KommanderController.execute("stalk ${event.user.id} -chid $officeChannel -user ${Settings.OWNER_ID}")
     }
 
     fun checkForLinks(message: Message)
     {
+        if(DiscordController.getGuild(message.channelId).id != System.getenv("HSG"))
+            return
         if (message.author.isBot)
         {
             return
