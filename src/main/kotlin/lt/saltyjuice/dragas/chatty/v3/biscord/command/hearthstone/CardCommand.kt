@@ -6,7 +6,10 @@ import lt.saltyjuice.dragas.chatty.v3.biscord.entity.Tag
 import lt.saltyjuice.dragas.chatty.v3.biscord.entity.Type
 import lt.saltyjuice.dragas.chatty.v3.biscord.utility.CardUtility
 import lt.saltyjuice.dragas.chatty.v3.biscord.utility.HibernateUtil
+import lt.saltyjuice.dragas.chatty.v3.discord.api.DiscordAPI
+import lt.saltyjuice.dragas.chatty.v3.discord.api.Utility
 import lt.saltyjuice.dragas.chatty.v3.discord.message.builder.MessageBuilder
+import lt.saltyjuice.dragas.chatty.v3.discord.message.builder.PrivateChannelBuilder
 import lt.saltyjuice.dragas.utility.kommander.annotations.Description
 import lt.saltyjuice.dragas.utility.kommander.annotations.Modifier
 import lt.saltyjuice.dragas.utility.kommander.annotations.Name
@@ -107,6 +110,8 @@ open class CardCommand : ProtectedDiscordCommand()
             text.append("-l ${list.size}`")
             respond(text.toString())
         }
+        if(list.size > 3)
+            this.chid = Utility.discordAPI.createChannel(PrivateChannelBuilder(chid)).execute().body()?.id ?: ""
         silent = false
         list
                 .parallelStream()
