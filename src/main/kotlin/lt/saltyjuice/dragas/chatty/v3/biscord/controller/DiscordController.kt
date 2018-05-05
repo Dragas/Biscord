@@ -1,6 +1,6 @@
 package lt.saltyjuice.dragas.chatty.v3.biscord.controller
 
-import lt.saltyjuice.dragas.chatty.v3.discord.controller.DiscordConnectionController
+
 import lt.saltyjuice.dragas.chatty.v3.discord.message.general.Guild
 import lt.saltyjuice.dragas.chatty.v3.discord.message.general.GuildIntegrationUpdate
 import lt.saltyjuice.dragas.chatty.v3.discord.message.general.RoleChanged
@@ -38,7 +38,7 @@ class DiscordController : DiscordConnectionController()
         @JvmStatic
         fun getGuild(channelId : String) : Guild
         {
-            val channel = channels[channelId]!!
+            val channel = DiscordConnectionController.channels[channelId]!!
             val guild = guilds[channel.guildId]!!
             return guild
         }
