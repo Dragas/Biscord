@@ -110,7 +110,7 @@ open class CardCommand : ProtectedDiscordCommand()
             text.append("-l ${list.size}`")
             respond(text.toString())
         }
-        if(list.size > 3)
+        if(limit > 3)
             this.chid = Utility.discordAPI.createChannel(PrivateChannelBuilder(chid)).execute().body()?.id ?: ""
         silent = false
         list
