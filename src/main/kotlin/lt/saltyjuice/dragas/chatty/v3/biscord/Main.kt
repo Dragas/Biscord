@@ -1,10 +1,7 @@
 package lt.saltyjuice.dragas.chatty.v3.biscord
 
 import kotlinx.coroutines.experimental.runBlocking
-import lt.saltyjuice.dragas.chatty.v3.biscord.controller.CardController
-import lt.saltyjuice.dragas.chatty.v3.biscord.controller.DeckController
-import lt.saltyjuice.dragas.chatty.v3.biscord.controller.KommanderController
-import lt.saltyjuice.dragas.chatty.v3.biscord.controller.StalkingController
+import lt.saltyjuice.dragas.chatty.v3.biscord.controller.*
 import lt.saltyjuice.dragas.chatty.v3.biscord.utility.CardUtility
 import lt.saltyjuice.dragas.chatty.v3.discord.controller.DiscordConnectionController
 import lt.saltyjuice.dragas.chatty.v3.discord.main.DiscordClient
@@ -28,7 +25,7 @@ fun main(args: Array<String>) = runBlocking<Unit>
     Khan.setClient(client)
     CardUtility.initialize()
     DiscordClient(
-            DiscordConnectionController::class.java,
+            DiscordController::class.java,
             DeckController::class.java,
             StalkingController::class.java,
             KommanderController::class.java,
