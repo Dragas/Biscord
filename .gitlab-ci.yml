@@ -30,7 +30,7 @@ before_script:
 cache:
     paths:
     - .gradle/
-    - .build/
+    - build/
 
 # We redirect the gradle user home using -g so that it caches the
 # wrapper and dependencies.
@@ -43,7 +43,7 @@ cache:
 build:
   stage: build
   script:
-    - ./gradlew -g /cache/.gradle clean assemble
+    - ./gradlew -g `pwd`/.gradle clean assemble
   allow_failure: false
 
 # Use the generated build output to run the tests.
@@ -52,18 +52,19 @@ test:
   environment:
     name: testing
   script:
-    - ./gradlew -g /cache/.gradle check --info
     - chmod +x codecov
+    - ./gradlew -g `pwd`/.gradle check --info
     - ./codecov
   allow_failure: false
 
 deploy-to-heroku:
   image: ruby:2.4
   stage: deploy
+  before_script:
+    - chmod +x herokudeployer
   environment:
     name: herokudeployment
   script:
-    - chmod +x herokudeployer
     - ./herokudeployer
   only:
     - master
