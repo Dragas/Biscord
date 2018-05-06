@@ -2,8 +2,19 @@ package lt.saltyjuice.dragas.chatty.v3.biscord.controller
 
 
 import lt.saltyjuice.dragas.chatty.v3.discord.message.general.*
+/**
+ * ODCC stands for Original discord connection controller.
+ */
+import lt.saltyjuice.dragas.chatty.v3.discord.controller.DiscordConnectionController as ODCC
 import java.util.function.Predicate
 
+/**
+ * Discord controller that attempts to fix the visibility and synchronization issue
+ * that original discord controller, provided by chatty framework, imposes.
+ *
+ * As a compatability measure, it still reflects on the original controller. Especially in
+ * the [onReady] method.
+ */
 class DiscordController : DiscordConnectionController()
 {
     override fun onGuildRoleCreate(request: RoleChanged)
@@ -59,6 +70,18 @@ class DiscordController : DiscordConnectionController()
         synchronized(this)
         {
             super.onChannelDelete(request)
+        }
+    }
+
+    override fun onReady(request: Ready)
+    {
+        super.onReady(request)
+        //a hack to maintain support with regular chatty library which sadly
+        //depends on a PRIVATE FIELD IMPLEMENTATIONS
+        //god i want to shoot 9 month ago me
+        ODCC.javaClass.getMethod("access\$setReadyEvent\$p", ODCC.javaClass, Ready::class.java).apply {
+            //this.isAccessible = true
+            this.invoke(ODCC.Companion, ODCC.Companion, request)
         }
     }
 
