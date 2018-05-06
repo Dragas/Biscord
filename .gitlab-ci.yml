@@ -49,11 +49,10 @@ build:
 # Use the generated build output to run the tests.
 test:
   stage: test
-  before_script:
-    - chmod +x codecov
   environment:
     name: testing
   script:
+    - chmod +x codecov
     - ./gradlew -g `pwd`/.gradle check --info
     - ./codecov
   allow_failure: false
