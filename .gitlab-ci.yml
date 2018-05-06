@@ -29,9 +29,8 @@ before_script:
 
 cache:
     paths:
-    - /cache/.gradle
-    - ./.gradle/
-    - ./build/
+    - .gradle/
+    - .build/
 
 # We redirect the gradle user home using -g so that it caches the
 # wrapper and dependencies.
