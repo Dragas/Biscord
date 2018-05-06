@@ -49,18 +49,7 @@ test:
     - ./gradlew -g /cache/.gradle check --info
     - chmod +x codecov
     - ./codecov
-
-deploy-to-svn:
-  stage: deploy
-  environment:
-    name: svndeployment
-  script:
-    # Add Svn as remote
-    - chmod -x gradlew
-    - chmod +x svndeployer
-    - ./svndeployer
-  only:
-    - master
+  allow_failure: false
 
 deploy-to-heroku:
   image: ruby:2.4
