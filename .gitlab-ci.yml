@@ -24,7 +24,13 @@ variables:
 # https://docs.gradle.org/current/userguide/gradle_wrapper.html
 # It is expected that any modern gradle project has a wrapper
 before_script:
+    - export GRADLE_USER_HOME=`pwd`/.gradle
     - chmod +x gradlew
+
+cache:
+    paths:
+    - .gradle/
+    - .build/
 
 # We redirect the gradle user home using -g so that it caches the
 # wrapper and dependencies.
