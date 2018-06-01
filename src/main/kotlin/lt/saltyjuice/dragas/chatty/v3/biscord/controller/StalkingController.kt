@@ -186,7 +186,7 @@ class StalkingController : Controller
 
     private fun newThreadToMessage(thread : KhanThread) : MessageBuilder
     {
-        return MessageBuilder("283769389071859732")
+        return MessageBuilder("451840008920498209")
                 .append("New ${thread.subject} thread found. You can view it at https://boards.4chan.org/vg/thread/${thread.postNumber}.")
     }
 
