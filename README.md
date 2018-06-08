@@ -9,6 +9,8 @@ An implementation of `Chatty-Discord` provided at [Chatty](https://github.com/Dr
 
 ## Building
 
+Prior doing anything, be sure you have `JAVA_HOME` environmental variable pointing to your JDK.
+
 Build application using the either `:distZip` or `:installDist` Gradle tasks like so:
 ```
 ./gradlew :distZip
